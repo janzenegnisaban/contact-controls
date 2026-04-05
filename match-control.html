@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arnis Full Combat — Match Control — KaliArena</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body { height: 100%; }
+    :root {
+      --red:    #b91c1c;
+      --red-bg: #fef2f2;
+      --red-border: #fca5a5;
+      --blue:   #1d4ed8;
+      --blue-bg: #eff6ff;
+      --blue-border: #93c5fd;
+      --gold:   #d97706;
+      --gold-bg: #fffbeb;
+      --gold-border: #fcd34d;
+      --green:  #16a34a;
+      --bg:     #f3f4f6;
+      --card:   #ffffff;
+      --border: #e5e7eb;
+      --muted:  #f9fafb;
+      --muted-fg: #6b7280;
+      --fg:     #111827;
+      --radius: 8px;
+      --shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06);
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--fg);
+      min-height: 100vh; min-height: 100dvh;
+      display: flex; flex-direction: column;
+    }
+
+    /* ── HEADER ─────────────────────────── */
+    header {
+      background: var(--card); border-bottom: 1px solid var(--border);
+      padding: 10px 20px; position: sticky; top: 0; z-index: 50;
+      box-shadow: var(--shadow); flex-shrink: 0;
+    }
+    .header-inner { width: 100%; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+    .header-brand { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .header-brand .kicker { font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--muted-fg); }
+    .header-brand .title-line { font-size: clamp(16px, 2vw, 20px); font-weight: 800; line-height: 1.15; }
+    .header-left  { display: flex; align-items: center; gap: 10px; }
+    .header-right { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+
+    /* ── BUTTONS ─────────────────────────── */
+    button {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      border: 1px solid var(--border); border-radius: var(--radius); background: var(--card);
+      color: var(--fg); font-size: 13px; font-weight: 500; cursor: pointer;
+      padding: 6px 12px; line-height: 1; transition: opacity .15s, background .15s;
+      white-space: nowrap;
+    }
+    button:hover { opacity: .85; }
+    button:disabled { opacity: .4; cursor: not-allowed; }
+    .btn-ghost  { border-color: transparent; background: transparent; }
+    .btn-ghost:hover { background: var(--muted); }
+    .btn-outline { border-color: var(--border); background: var(--card); }
+    .btn-primary { background: #b91c1c; border-color: #b91c1c; color: #fff; }
+    .btn-destructive { background: #ef4444; border-color: #ef4444; color: #fff; }
+    .btn-green { background: var(--green); border-color: var(--green); color: #fff; }
+    .btn-red    { background: var(--red);  border-color: var(--red);  color: #fff; }
+    .btn-blue   { background: var(--blue); border-color: var(--blue); color: #fff; }
+    .btn-gold   { background: var(--gold); border-color: var(--gold); color: #fff; }
+    .btn-icon   { padding: 0; width: 36px; height: 36px; border-radius: 50%; }
+    .btn-icon-lg{ padding: 0; width: 48px; height: 48px; border-radius: 50%; font-size: 18px; }
+    .btn-sm     { padding: 4px 8px; font-size: 12px; }
+    .btn-lg     { padding: 12px 20px; font-size: 16px; font-weight: 700; }
+    button svg  { pointer-events: none; }
+
+    /* ── BADGE ─────────────────────────── */
+    .badge {
+      display: inline-flex; align-items: center; border-radius: 999px;
+      padding: 2px 8px; font-size: 11px; font-weight: 600;
+      border: 1px solid var(--border); background: var(--muted);
+    }
+    .badge-red   { background: var(--red);  border-color: var(--red);  color: #fff; }
+    .badge-blue  { background: var(--blue); border-color: var(--blue); color: #fff; }
+    .badge-green { background: #dcfce7; border-color: #86efac; color: #166534; }
+    .badge-pulse { animation: pulse 1.5s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{ opacity:1 } 50%{ opacity:.5 } }
+
+    /* ── CARD ─────────────────────────── */
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .card-header { padding: 16px 20px 8px; }
+    .card-title  { font-size: 14px; font-weight: 600; }
+    .card-title-sm { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted-fg); }
+    .card-desc   { font-size: 13px; color: var(--muted-fg); }
+    .card-body   { padding: 16px 20px 20px; }
+
+    /* ── LAYOUT (full page) ─────────────────────────── */
+    main {
+      flex: 1;
+      width: 100%;
+      min-height: 0;
+      margin: 0 auto;
+      padding: clamp(12px, 1.5vw, 20px) clamp(12px, 2vw, 28px);
+      display: grid;
+      grid-template-columns: minmax(240px, 340px) minmax(0, 1fr);
+      gap: clamp(12px, 1.5vw, 24px);
+      align-content: start;
+    }
+    @media(max-width:900px){ main{ grid-template-columns:1fr; } .col-left{ order:2; } .col-right{ order:1; } }
+
+    /* ── SCORING GRID ─────────────────────────── */
+    .score-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; }
+    @media(max-width:700px){ .score-grid{ grid-template-columns:1fr; } }
+
+    /* ── CORNER CARD ─────────────────────────── */
+    .corner-card-blue { border-left: 8px solid var(--blue); }
+    .corner-card-red  { border-right: 8px solid var(--red); }
+    .corner-header-blue { background: rgba(29,78,216,.05); padding: 16px 20px; border-bottom: 1px solid var(--border); }
+    .corner-header-red  { background: rgba(185,28,28,.05);  padding: 16px 20px; border-bottom: 1px solid var(--border); text-align: right; }
+    .fighter-name { font-size: 22px; font-weight: 700; line-height: 1.2; }
+    .fighter-team { font-size: 13px; font-weight: 500; }
+    .fighter-team-blue { color: rgba(29,78,216,.8); }
+    .fighter-team-red  { color: rgba(185,28,28,.8); }
+
+    .score-display { text-align: center; background: var(--muted); border-radius: var(--radius); padding: 20px 16px; }
+    .score-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted-fg); margin-bottom: 8px; }
+    .score-number { font-size: clamp(72px, 12vw, 130px); font-weight: 900; line-height: 1; margin-bottom: 16px; }
+    .score-number-blue { color: var(--blue); }
+    .score-number-red  { color: var(--red); }
+
+    .stat-row { display: flex; align-items: center; background: var(--muted); border-radius: var(--radius); padding: 12px 16px; gap: 4px; }
+    .stat-col { flex: 1; text-align: center; }
+    .stat-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted-fg); margin-bottom: 6px; }
+    .divider-v { width: 1px; height: 48px; background: var(--border); flex-shrink: 0; margin: 0 4px; }
+    .pips { display: flex; justify-content: center; gap: 4px; margin-bottom: 8px; }
+    .pip { width: 14px; height: 14px; border-radius: 3px; border: 1px solid #d1d5db; }
+    .pip-red      { background: var(--red);    border-color: var(--red); }
+    .pip-orange   { background: #f97316;        border-color: #f97316; }
+    .pip-active   { background: var(--gold);    border-color: var(--gold); }
+    .counter-btns { display: flex; justify-content: center; gap: 6px; }
+    .counter-btn  { width: 28px; height: 28px; border-radius: var(--radius); font-weight: 700; font-size: 14px; padding: 0; }
+    .adv-btn { width: 36px; height: 36px; border-radius: var(--radius); padding: 0; }
+    .adv-awarded { font-size: 10px; font-weight: 700; color: var(--gold); margin-top: 4px; }
+
+    /* ── TIMER ─────────────────────────── */
+    .timer-card { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 20px; }
+    .round-badge { font-size: 14px; font-weight: 700; border: 2px solid var(--gold); color: var(--gold); padding: 4px 14px; border-radius: 999px; }
+    .timer-display {
+      font-size: clamp(52px, 8vw, 80px); font-family: 'Courier New', monospace; font-weight: 900;
+      letter-spacing: -.02em; cursor: pointer; border-radius: var(--radius); padding: 8px 16px;
+      transition: background .15s; user-select: none;
+    }
+    .timer-display:hover:not(.timer-editing) { background: var(--muted); }
+    .timer-danger { color: #ef4444; animation: pulse 1s ease-in-out infinite; }
+    .timer-input {
+      font-size: clamp(52px, 8vw, 80px); font-family: 'Courier New', monospace; font-weight: 900;
+      text-align: center; width: 240px; border: 2px solid var(--red); border-radius: var(--radius);
+      padding: 8px 16px; background: var(--muted); color: var(--fg); outline: none;
+    }
+    .timer-hint { font-size: 11px; color: var(--muted-fg); }
+    .timer-ended-label { font-size: 14px; font-weight: 600; color: var(--muted-fg); }
+    .round-winner-section { width: 100%; }
+    .round-winner-label { font-size: 11px; font-weight: 600; text-align: center; color: var(--muted-fg); margin-bottom: 8px; }
+    .round-winner-btns { display: flex; flex-direction: column; gap: 6px; }
+    .timer-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+
+    /* ── QUEUE ─────────────────────────── */
+    .queue-current { background: rgba(185,28,28,.05); border: 1px solid rgba(185,28,28,.2); border-radius: var(--radius); padding: 12px; }
+    .queue-upcoming { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; display: flex; align-items: center; gap: 10px; }
+    .queue-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .queue-meta { font-size: 10px; color: var(--muted-fg); }
+
+    /* ── SCORE SUMMARY ─────────────────────────── */
+    .score-box { border-radius: var(--radius); padding: 12px; display: flex; align-items: center; justify-content: space-between; }
+    .score-box-blue { background: var(--blue-bg); border: 1px solid var(--blue-border); }
+    .score-box-red  { background: var(--red-bg);  border: 1px solid var(--red-border); }
+    .score-box-num  { font-size: 28px; font-weight: 700; }
+    .score-box-num-blue { color: var(--blue); }
+    .score-box-num-red  { color: var(--red); }
+
+    /* ── SHORTCUTS ─────────────────────────── */
+    .shortcuts { background: rgba(59,130,246,.08); border: 1px solid rgba(59,130,246,.2); border-radius: var(--radius); padding: 16px 20px; }
+    .shortcut-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    @media(max-width:600px){ .shortcut-grid{ grid-template-columns:1fr; } }
+    .shortcut-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+    kbd { background: var(--muted); border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; font-size: 11px; font-family: monospace; }
+
+    /* ── DIALOG ─────────────────────────── */
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 16px; }
+    .overlay.hidden { display: none; }
+    .dialog { background: var(--card); border-radius: var(--radius); box-shadow: 0 20px 60px rgba(0,0,0,.2); width: 100%; max-width: 440px; overflow: hidden; }
+    .dialog-header { padding: 20px 24px 12px; border-bottom: 1px solid var(--border); }
+    .dialog-title  { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .dialog-desc   { font-size: 13px; color: var(--muted-fg); margin-top: 4px; }
+    .dialog-body   { padding: 16px 24px; }
+    .dialog-footer { padding: 12px 24px 20px; display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid var(--border); }
+
+    .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .result-box  { border-radius: var(--radius); padding: 16px; text-align: center; }
+    .result-box-red  { background: var(--red-bg);  border: 2px solid var(--red-border); }
+    .result-box-blue { background: var(--blue-bg); border: 2px solid var(--blue-border); }
+    .result-score { font-size: 36px; font-weight: 700; }
+    .result-score-red  { color: var(--red); }
+    .result-score-blue { color: var(--blue); }
+    .winner-box { border-radius: var(--radius); padding: 20px; text-align: center; }
+    .winner-box-red  { background: var(--red-bg);  border: 2px solid var(--red);  }
+    .winner-box-blue { background: var(--blue-bg); border: 2px solid var(--blue); }
+    .winner-box-tie  { background: var(--muted);   border: 2px solid var(--border); }
+    .winner-name { font-size: 22px; font-weight: 700; }
+    .winner-name-red  { color: var(--red); }
+    .winner-name-blue { color: var(--blue); }
+
+    .summary-rows { background: var(--muted); border-radius: var(--radius); padding: 12px 16px; }
+    .summary-row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-bottom: 1px solid var(--border); }
+    .summary-row:last-child { border-bottom: none; }
+
+    .advantage-note { background: var(--gold-bg); border: 1px solid var(--gold-border); border-radius: var(--radius); padding: 8px; text-align: center; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 4px; }
+
+    /* ── TOAST ─────────────────────────── */
+    #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 500; display: flex; flex-direction: column; gap: 8px; }
+    .toast { background: var(--fg); color: #fff; padding: 10px 16px; border-radius: var(--radius); box-shadow: 0 4px 12px rgba(0,0,0,.2); font-size: 13px; max-width: 320px; animation: slide-in .2s ease; }
+    .toast-title { font-weight: 600; }
+    .toast-desc  { color: #d1d5db; font-size: 12px; margin-top: 2px; }
+    @keyframes slide-in { from{ transform:translateX(100%); opacity:0 } to{ transform:translateX(0); opacity:1 } }
+
+    /* ── MISC ─────────────────────────── */
+    .mt-1 { margin-top: 4px; } .mt-2 { margin-top: 8px; } .mt-3 { margin-top: 12px; } .mt-4 { margin-top: 16px; }
+    .mb-2 { margin-bottom: 8px; } .mb-3 { margin-bottom: 12px; }
+    .flex { display: flex; } .items-center { align-items: center; } .gap-2 { gap: 8px; }
+    .w-full { width: 100%; } .text-center { text-align: center; }
+    .text-sm { font-size: 13px; } .text-xs { font-size: 11px; }
+    .font-bold { font-weight: 700; } .text-muted { color: var(--muted-fg); }
+    .space-y-3 > * + * { margin-top: 12px; }
+    .space-y-2 > * + * { margin-top: 8px; }
+    .bounce { animation: bounce .6s ease infinite alternate; }
+    @keyframes bounce { from{ transform:translateY(0) } to{ transform:translateY(-4px) } }
+    .col-left  { display: flex; flex-direction: column; gap: 16px; }
+    .col-right { display: flex; flex-direction: column; gap: 16px; }
+    .star { color: var(--gold); }
+    .star-fill { color: var(--gold); fill: var(--gold); }
+    svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; vertical-align: middle; }
+    .no-stroke { stroke: none; }
+    .ended-overlay { pointer-events: none; }
+
+    /* ── EXTENSION DISPLAY — aligned with arnis/app/display/match/page.tsx ───── */
+    body.is-extension header,
+    body.is-extension main,
+    body.is-extension #toast-container { display: none !important; }
+
+    body.is-extension {
+      background: #000;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    #extension-root {
+      display: none;
+      flex: 1;
+      min-height: 0;
+      flex-direction: column;
+      font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+      background: #000;
+      color: #fafafa;
+      overflow: auto;
+      user-select: none;
+    }
+    body.is-extension #extension-root { display: flex; }
+
+    /* Match page tokens (tailwind-aligned) */
+    #extension-root {
+      --blue-corner: #3b82f6;
+      --red-corner: #dc2626;
+      --gold-accent: #eab308;
+      --muted-fg: #a1a1aa;
+      --primary: #b91c1c;
+      --secondary: #eab308;
+      --destructive: #ef4444;
+      --zinc-800: #27272a;
+      --zinc-900: #18181b;
+      --zinc-950: #09090b;
+    }
+
+    .ext-d-header {
+      background: linear-gradient(90deg, rgba(185,28,28,.35), rgba(234,88,12,.18));
+      border-bottom: 4px solid rgba(185,28,28,.55);
+      padding: 16px 20px;
+    }
+    .ext-d-header-inner {
+      max-width: 100%;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .ext-d-brand { display: flex; align-items: center; gap: 16px; }
+    .ext-d-logo {
+      width: 56px; height: 56px; border-radius: 10px;
+      background: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 8px 24px rgba(185,28,28,.45);
+      border: 2px solid rgba(255,255,255,.15);
+    }
+    .ext-d-logo svg { width: 32px; height: 32px; stroke: #fff; fill: none; }
+    .ext-d-title { font-size: 1.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; }
+    .ext-d-sub { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--secondary); }
+    .ext-d-bout-label { font-size: 0.7rem; color: var(--muted-fg); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 4px; text-align: right; }
+    .ext-d-bout-num { font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 900; letter-spacing: -0.02em; text-align: right; }
+
+    .ext-d-main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 0;
+      min-height: 0;
+    }
+    @media (max-width: 1024px) {
+      .ext-d-main { grid-template-columns: 1fr; }
+    }
+
+    .ext-d-col { min-height: 280px; display: flex; flex-direction: column; padding: 20px; }
+    .ext-d-col-blue {
+      grid-column: span 4;
+      background: rgba(59, 130, 246, 0.12);
+      border-right: 2px solid rgba(59, 130, 246, 0.35);
+    }
+    .ext-d-col-center {
+      grid-column: span 4;
+      background: #000;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 16px;
+    }
+    .ext-d-col-red {
+      grid-column: span 4;
+      background: rgba(220, 38, 38, 0.12);
+      border-left: 2px solid rgba(220, 38, 38, 0.35);
+    }
+    @media (max-width: 1024px) {
+      .ext-d-col-blue, .ext-d-col-center, .ext-d-col-red { grid-column: span 1; }
+    }
+
+    .ext-d-col-blue.win-highlight {
+      background: rgba(59, 130, 246, 0.22);
+      border-right: 4px solid var(--blue-corner);
+    }
+    .ext-d-col-blue.lose-dim { background: rgba(24, 24, 27, 0.65); border-right-color: #3f3f46; }
+    .ext-d-col-red.win-highlight {
+      background: rgba(220, 38, 38, 0.22);
+      border-left: 4px solid var(--red-corner);
+    }
+    .ext-d-col-red.lose-dim { background: rgba(24, 24, 27, 0.65); border-left-color: #3f3f46; }
+
+    .ext-d-badge {
+      display: inline-flex; align-items: center;
+      font-size: 1rem; font-weight: 800; padding: 8px 16px; border-radius: 6px;
+      margin-bottom: 12px;
+    }
+    .ext-d-badge-blue { background: var(--blue-corner); color: #fff; }
+    .ext-d-badge-red { background: var(--red-corner); color: #fff; }
+    .ext-d-row-head { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 12px; }
+    .ext-d-row-head.blue { flex-direction: row; }
+    .ext-d-row-head.red { flex-direction: row-reverse; }
+
+    .ext-d-photo {
+      position: relative; width: clamp(100px, 12vw, 160px); height: clamp(100px, 12vw, 160px); flex-shrink: 0;
+      border-radius: 12px; overflow: hidden;
+      border: 2px solid rgba(255,255,255,.2);
+      box-shadow: 0 0 30px rgba(59, 130, 246, 0.35);
+    }
+    .ext-d-col-red .ext-d-photo { box-shadow: 0 0 30px rgba(220, 38, 38, 0.35); }
+    .ext-d-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ext-d-photo-ph {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.08), transparent);
+    }
+
+    .ext-d-name-block.blue { text-align: right; flex: 1; min-width: 0; }
+    .ext-d-name-block.red { text-align: left; flex: 1; min-width: 0; }
+    .ext-d-name {
+      font-size: clamp(1.1rem, 2.2vw, 2.25rem); font-weight: 900; text-transform: uppercase; line-height: 1.1;
+      word-break: break-word;
+    }
+    .ext-d-team {
+      font-size: clamp(0.8rem, 1.2vw, 1.1rem); font-weight: 600; text-transform: uppercase;
+      margin-top: 8px; opacity: 0.9;
+    }
+    .ext-d-team-blue { color: rgba(147, 197, 253, 0.95); }
+    .ext-d-team-red { color: rgba(252, 165, 165, 0.95); }
+
+    .ext-d-score-wrap { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 120px; }
+    .ext-d-score-label { font-size: 1rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted-fg); margin-bottom: 8px; text-align: center; }
+    .ext-d-score {
+      font-size: clamp(3.5rem, 12vw, 11rem); font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums;
+      text-align: center;
+    }
+    .ext-d-score-num-blue { color: var(--blue-corner); text-shadow: 0 4px 24px rgba(59, 130, 246, 0.45); }
+    .ext-d-score-num-red { color: var(--red-corner); text-shadow: 0 4px 24px rgba(220, 38, 38, 0.45); }
+    .ext-d-score-num-blue.winner-glow { color: #facc15; animation: pulse 1.2s ease-in-out infinite; text-shadow: 0 0 40px rgba(250, 204, 21, 0.65); transform: scale(1.05); }
+    .ext-d-score-num-red.winner-glow { color: #facc15; animation: pulse 1.2s ease-in-out infinite; text-shadow: 0 0 40px rgba(250, 204, 21, 0.65); transform: scale(1.05); }
+    .ext-d-score-num-blue.loser-dim, .ext-d-score-num-red.loser-dim { opacity: 0.45; transform: scale(0.95); }
+
+    .ext-d-stats-row { margin-top: 20px; display: flex; justify-content: center; gap: 32px; flex-wrap: wrap; }
+    .ext-d-stat-pill { text-align: center; }
+    .ext-d-stat-pill p { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-fg); margin-bottom: 8px; }
+    .ext-d-pips { display: flex; gap: 8px; justify-content: center; }
+    .ext-d-pip {
+      width: 40px; height: 40px; border-radius: 6px; border: 2px solid rgba(161, 161, 170, 0.45);
+      background: transparent; transition: all 0.2s;
+    }
+    .ext-d-pip.disarm.on { background: #f97316; border-color: #f97316; box-shadow: 0 4px 14px rgba(249, 115, 22, 0.45); }
+    .ext-d-pip.viol.on { background: var(--destructive); border-color: #fff; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.45); }
+    .ext-d-pip.viol.on svg { width: 22px; height: 22px; margin: 8px auto; display: block; stroke: #fff; fill: none; }
+
+    .ext-d-adv {
+      margin-top: 16px; padding: 14px; border-radius: 10px;
+      border: 2px solid rgba(234, 179, 8, 0.45);
+      background: rgba(234, 179, 8, 0.12);
+      display: none; align-items: center; justify-content: center; gap: 10px;
+      font-size: 1.1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gold-accent);
+    }
+    .ext-d-adv.visible { display: flex; }
+    .ext-d-adv svg { width: 28px; height: 28px; fill: var(--gold-accent); stroke: none; }
+
+    .ext-d-round-badge {
+      display: inline-block; font-size: 1rem; font-weight: 800; padding: 8px 16px; border-radius: 6px;
+      background: var(--secondary); color: #1c1917; border: 2px solid rgba(234, 179, 8, 0.45);
+      margin-bottom: 10px;
+    }
+    .ext-d-timer {
+      font-size: clamp(3rem, 11vw, 14rem); font-weight: 900; letter-spacing: -0.03em; line-height: 1;
+      font-variant-numeric: tabular-nums;
+      color: #fff;
+      text-shadow: 0 0 20px rgba(255,255,255,.12);
+    }
+    .ext-d-timer.warn { color: #ef4444; animation: pulse 1s ease-in-out infinite; text-shadow: 0 0 20px rgba(239,68,68,.45); }
+    .ext-d-live { display: none; align-items: center; justify-content: center; gap: 8px; margin-top: 8px; font-weight: 700; color: #22c55e; text-transform: uppercase; letter-spacing: 0.08em; }
+    .ext-d-live.visible { display: flex; }
+    .ext-d-live-dot { width: 10px; height: 10px; border-radius: 999px; background: #22c55e; animation: pulse 1.2s ease-in-out infinite; box-shadow: 0 0 12px rgba(34,197,94,.7); }
+
+    .ext-d-round-results-title { font-size: 0.85rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted-fg); margin: 16px 0 10px; }
+    .ext-d-round-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .ext-d-rnd-cell { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .ext-d-rnd-box {
+      width: 44px; height: 44px; border-radius: 8px; border: 2px solid #3f3f46;
+      display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1rem;
+      background: #18181b; color: #71717a;
+    }
+    .ext-d-rnd-box.filled-red { background: var(--red-corner); border-color: var(--red-corner); color: #fff; }
+    .ext-d-rnd-box.filled-blue { background: var(--blue-corner); border-color: var(--blue-corner); color: #fff; }
+    .ext-d-rnd-box.current { border-color: var(--secondary); background: rgba(234, 179, 8, 0.15); color: var(--secondary); transform: scale(1.08); }
+    .ext-d-rnd-lbl { font-size: 10px; font-weight: 700; color: var(--muted-fg); }
+
+    .ext-d-category { margin-top: 12px; font-size: clamp(1rem, 2vw, 1.5rem); font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-fg); }
+    .ext-d-ended { margin-top: 8px; font-size: 1rem; font-weight: 700; color: var(--muted-fg); }
+
+    .ext-d-upnext {
+      background: rgba(9, 9, 11, 0.85);
+      border-top: 4px solid var(--zinc-800);
+      padding: 18px 20px;
+    }
+    .ext-d-upnext h3 { font-size: 1.15rem; font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+    .ext-d-upnext h3 svg { width: 20px; height: 20px; stroke: var(--muted-fg); }
+    .ext-d-up-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    @media (max-width: 768px) { .ext-d-up-grid { grid-template-columns: 1fr; } }
+    .ext-d-up-card {
+      background: rgba(24, 24, 27, 0.65); border: 1px solid var(--zinc-800); border-radius: 10px; padding: 12px;
+    }
+    .ext-d-up-card .bout { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: var(--primary); color: #fff; margin-bottom: 8px; }
+    .ext-d-up-names { font-size: 1.1rem; font-weight: 900; text-transform: uppercase; }
+    .ext-d-up-names .vr { color: var(--muted-fg); font-size: 0.85rem; margin: 0 6px; }
+    .ext-d-up-names .nr { color: var(--red-corner); }
+    .ext-d-up-names .nb { color: var(--blue-corner); }
+    .ext-d-up-cat { font-size: 11px; color: var(--muted-fg); margin-top: 6px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+
+    .ext-d-foot {
+      background: #000; border-top: 1px solid var(--zinc-900); padding: 10px 20px;
+      font-size: 11px; color: var(--muted-fg);
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px;
+    }
+    .ext-d-foot .live-dot { width: 6px; height: 6px; border-radius: 999px; background: #22c55e; animation: pulse 1.5s ease-in-out infinite; display: inline-block; margin-right: 6px; }
+
+    .ext-d-win-overlay {
+      position: absolute; inset: 0; z-index: 20; pointer-events: none;
+      display: none; align-items: center; justify-content: center; flex-direction: column; gap: 12px;
+      background: rgba(0,0,0,.35);
+    }
+    .ext-d-win-overlay.show { display: flex; }
+    .ext-d-win-overlay .trophy { font-size: 4rem; filter: drop-shadow(0 0 20px rgba(250,204,21,.6)); }
+    .ext-d-win-txt { font-size: clamp(1.75rem, 4vw, 3rem); font-weight: 900; color: #facc15; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    .ext-d-col { position: relative; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="main-header">
+  <div class="header-inner">
+    <div class="header-left">
+      <button type="button" class="btn-ghost btn-sm" onclick="history.back()">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Back
+      </button>
+      <div class="header-brand">
+        <span class="kicker">Arnis · Full combat</span>
+        <span class="title-line">Match control</span>
+      </div>
+      <span id="court-badge" class="badge" style="display:none"></span>
+    </div>
+    <div class="header-right">
+      <a class="btn-outline btn-sm" id="link-extension" href="#" target="_blank" title="Opens read-only display for projector or second screen">Extension display</a>
+      <span class="badge badge-green badge-pulse">● Live</span>
+      <span id="rules-badge" class="badge"></span>
+      <button type="button" class="btn-destructive btn-sm" id="btn-end-match">End Match</button>
+      <button type="button" class="btn-green btn-sm" id="btn-next-match-header" style="display:none">Next Match</button>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN CONTROL PANEL -->
+<main id="main-panel">
+  <!-- LEFT COL -->
+  <div class="col-left">
+    <!-- Match Queue -->
+    <div class="card">
+      <div class="card-header"><span class="card-title-sm">Match Queue</span></div>
+      <div class="card-body space-y-3" id="queue-list">
+        <!-- injected -->
+      </div>
+    </div>
+
+    <!-- Score Summary -->
+    <div class="card">
+      <div class="card-header"><span class="card-title-sm">Current Score</span></div>
+      <div class="card-body space-y-3">
+        <div class="score-box score-box-blue">
+          <div>
+            <div class="text-xs text-muted">Blue Corner</div>
+            <div class="score-box-num score-box-num-blue" id="sidebar-blue-score">0</div>
+          </div>
+          <span id="sidebar-blue-adv" style="display:none;font-size:22px" class="bounce">★</span>
+        </div>
+        <div class="score-box score-box-red">
+          <div>
+            <div class="text-xs text-muted">Red Corner</div>
+            <div class="score-box-num score-box-num-red" id="sidebar-red-score">0</div>
+          </div>
+          <span id="sidebar-red-adv" style="display:none;font-size:22px" class="bounce">★</span>
+        </div>
+        <div id="tie-note" class="advantage-note" style="display:none">
+          ★ Tie — Advantage Point decides winner
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT COL -->
+  <div class="col-right">
+    <!-- Scoring Row -->
+    <div class="score-grid">
+
+      <!-- BLUE CORNER -->
+      <div class="card corner-card-blue" id="blue-corner-card">
+        <div class="corner-header-blue">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div>
+              <span class="badge badge-blue mb-2">BLUE CORNER</span>
+              <div class="fighter-name" id="blue-name">Marlon Garcia</div>
+              <div class="fighter-team fighter-team-blue" id="blue-team">Cebu Arnis Academy</div>
+            </div>
+            <span id="blue-adv-star" style="display:none;font-size:28px;color:var(--gold);fill:var(--gold)" class="bounce">★</span>
+          </div>
+        </div>
+        <div class="card-body space-y-3">
+          <div class="score-display">
+            <div class="score-label">SCORE</div>
+            <div class="score-number score-number-blue" id="blue-score">0</div>
+            <button class="btn-blue btn-lg w-full" id="btn-blue-add" style="margin-bottom:8px">
+              <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              ADD POINT
+            </button>
+            <button class="btn-outline btn-lg w-full" id="btn-blue-remove" style="display:none">
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Remove Point
+            </button>
+          </div>
+          <div class="stat-row">
+            <!-- Violations -->
+            <div class="stat-col">
+              <div class="stat-label">Violations</div>
+              <div class="pips" id="blue-viol-pips">
+                <div class="pip" data-corner="blue" data-i="1"></div>
+                <div class="pip" data-corner="blue" data-i="2"></div>
+                <div class="pip" data-corner="blue" data-i="3"></div>
+              </div>
+              <div class="counter-btns">
+                <button class="btn-outline counter-btn" id="btn-blue-viol-dec">−</button>
+                <button class="btn-destructive counter-btn" id="btn-blue-viol-inc">+</button>
+              </div>
+            </div>
+            <div class="divider-v"></div>
+            <!-- Disarm -->
+            <div class="stat-col">
+              <div class="stat-label">Disarm</div>
+              <div class="pips" id="blue-disarm-pips">
+                <div class="pip" data-corner="blue" data-type="disarm" data-i="1"></div>
+                <div class="pip" data-corner="blue" data-type="disarm" data-i="2"></div>
+              </div>
+              <div class="counter-btns">
+                <button class="btn-outline counter-btn" id="btn-blue-disarm-dec">−</button>
+                <button class="counter-btn" style="background:#f97316;border-color:#f97316;color:#fff" id="btn-blue-disarm-inc">+</button>
+              </div>
+            </div>
+            <div class="divider-v"></div>
+            <!-- Advantage -->
+            <div class="stat-col">
+              <div class="stat-label">Advantage</div>
+              <div style="display:flex;justify-content:center;margin-bottom:4px">
+                <button class="adv-btn btn-outline" id="btn-blue-adv">★</button>
+              </div>
+              <div class="adv-awarded" id="blue-adv-label" style="display:none">Awarded</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIMER -->
+      <div class="card" style="border:2px solid rgba(185,28,28,.2)">
+        <div class="card-body">
+          <div class="timer-card">
+            <div class="round-badge" id="round-label">ROUND 1 of 3</div>
+            <div id="timer-display-wrap">
+              <div class="timer-display" id="timer-display" title="Click to edit time">00:60</div>
+              <input type="text" class="timer-input" id="timer-input" value="" style="display:none" placeholder="MM:SS" maxlength="5" />
+              <div class="timer-hint" id="timer-edit-hint" style="display:none">Enter to save • Esc to cancel</div>
+            </div>
+            <div class="timer-ended-label" id="timer-ended-label" style="display:none">Match Ended</div>
+            <div class="round-winner-section">
+              <div class="round-winner-label">Mark Round Winner</div>
+              <div class="round-winner-btns">
+                <button class="btn-outline btn-sm w-full" id="btn-red-won" style="height:36px">Red Won R<span class="rnd-num">1</span></button>
+                <button class="btn-outline btn-sm w-full" id="btn-blue-won" style="height:36px">Blue Won R<span class="rnd-num">1</span></button>
+              </div>
+            </div>
+            <div class="timer-controls">
+              <button class="btn-outline btn-icon-lg" id="btn-reset" title="Reset (R)">
+                <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.88"/></svg>
+              </button>
+              <button class="btn-green btn-icon-lg" id="btn-play-pause" title="Start/Pause (Space)">
+                <svg viewBox="0 0 24 24" id="play-icon"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor" stroke="none"/></svg>
+                <svg viewBox="0 0 24 24" id="pause-icon" style="display:none"><rect x="6" y="4" width="4" height="16" fill="currentColor" stroke="none"/><rect x="14" y="4" width="4" height="16" fill="currentColor" stroke="none"/></svg>
+              </button>
+              <button class="btn-outline" id="btn-next-round" style="display:none;height:36px;padding:0 14px;font-size:12px">Next Round</button>
+              <button class="btn-green" id="btn-next-match-timer" style="display:none;height:36px;padding:0 14px;font-size:12px">Next Match</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RED CORNER -->
+      <div class="card corner-card-red" id="red-corner-card">
+        <div class="corner-header-red">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-direction:row-reverse">
+            <div style="text-align:right">
+              <span class="badge badge-red mb-2">RED CORNER</span>
+              <div class="fighter-name" id="red-name">Juan Santos</div>
+              <div class="fighter-team fighter-team-red" id="red-team">Davao Stick Fighters</div>
+            </div>
+            <span id="red-adv-star" style="display:none;font-size:28px;color:var(--gold)" class="bounce">★</span>
+          </div>
+        </div>
+        <div class="card-body space-y-3">
+          <div class="score-display">
+            <div class="score-label">SCORE</div>
+            <div class="score-number score-number-red" id="red-score">0</div>
+            <button class="btn-red btn-lg w-full" id="btn-red-add" style="margin-bottom:8px">
+              <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              ADD POINT
+            </button>
+            <button class="btn-outline btn-lg w-full" id="btn-red-remove" style="display:none">
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Remove Point
+            </button>
+          </div>
+          <div class="stat-row">
+            <!-- Violations -->
+            <div class="stat-col">
+              <div class="stat-label">Violations</div>
+              <div class="pips" id="red-viol-pips">
+                <div class="pip" data-corner="red" data-i="1"></div>
+                <div class="pip" data-corner="red" data-i="2"></div>
+                <div class="pip" data-corner="red" data-i="3"></div>
+              </div>
+              <div class="counter-btns">
+                <button class="btn-outline counter-btn" id="btn-red-viol-dec">−</button>
+                <button class="btn-destructive counter-btn" id="btn-red-viol-inc">+</button>
+              </div>
+            </div>
+            <div class="divider-v"></div>
+            <!-- Disarm -->
+            <div class="stat-col">
+              <div class="stat-label">Disarm</div>
+              <div class="pips" id="red-disarm-pips">
+                <div class="pip" data-corner="red" data-type="disarm" data-i="1"></div>
+                <div class="pip" data-corner="red" data-type="disarm" data-i="2"></div>
+              </div>
+              <div class="counter-btns">
+                <button class="btn-outline counter-btn" id="btn-red-disarm-dec">−</button>
+                <button class="counter-btn" style="background:#f97316;border-color:#f97316;color:#fff" id="btn-red-disarm-inc">+</button>
+              </div>
+            </div>
+            <div class="divider-v"></div>
+            <!-- Advantage -->
+            <div class="stat-col">
+              <div class="stat-label">Advantage</div>
+              <div style="display:flex;justify-content:center;margin-bottom:4px">
+                <button class="adv-btn btn-outline" id="btn-red-adv">★</button>
+              </div>
+              <div class="adv-awarded" id="red-adv-label" style="display:none">Awarded</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /score-grid -->
+
+    <!-- Keyboard Shortcuts -->
+    <div class="shortcuts">
+      <div class="flex items-center gap-2 mb-3">
+        <svg viewBox="0 0 24 24" style="width:18px;height:18px;color:#3b82f6"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span style="font-size:13px;font-weight:600">Keyboard Shortcuts</span>
+      </div>
+      <div class="shortcut-grid">
+        <div class="shortcut-item"><kbd>SPACE</kbd><span class="text-muted">Start/Pause Timer</span></div>
+        <div class="shortcut-item"><kbd>R</kbd><span class="text-muted">Reset Timer</span></div>
+        <div class="shortcut-item"><kbd>N</kbd><span class="text-muted">Next Round</span></div>
+      </div>
+    </div>
+  </div><!-- /col-right -->
+</main>
+
+<!-- EXTENSION: ?display=extension — layout mirrors arnis/app/display/match/page.tsx -->
+<div id="extension-root">
+  <header class="ext-d-header">
+    <div class="ext-d-header-inner">
+      <div class="ext-d-brand">
+        <div class="ext-d-logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 2L4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z"/></svg>
+        </div>
+        <div>
+          <div class="ext-d-title">KaliArena</div>
+          <div class="ext-d-sub">Live Match Display · Arnis full combat</div>
+        </div>
+      </div>
+      <div>
+        <div class="ext-d-bout-label">Bout</div>
+        <div class="ext-d-bout-num" id="ext-header-bout">—</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="ext-d-main">
+    <!-- Blue corner — LEFT (same as page.tsx) -->
+    <section class="ext-d-col ext-d-col-blue" id="ext-col-blue">
+      <div class="ext-d-win-overlay" id="ext-blue-win-overlay">
+        <span class="trophy" aria-hidden="true">🏆</span>
+        <div class="ext-d-win-txt">Winner!</div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
+        <span class="ext-d-badge ext-d-badge-blue">BLUE CORNER</span>
+      </div>
+      <div class="ext-d-row-head blue">
+        <div class="ext-d-photo">
+          <img id="ext-img-blue" src="../arnis/public/blue corner.jpg" alt="" onerror="this.style.display='none'" />
+          <div class="ext-d-photo-ph"></div>
+        </div>
+        <div class="ext-d-name-block blue">
+          <div class="ext-d-name ext-d-name-blue" id="ext-blue-name">Blue</div>
+          <div class="ext-d-team ext-d-team-blue" id="ext-blue-team"></div>
+        </div>
+      </div>
+      <div class="ext-d-score-wrap">
+        <div style="width:100%">
+          <div class="ext-d-score-label">Score</div>
+          <div class="ext-d-score ext-d-score-num-blue" id="ext-blue-score">0</div>
+        </div>
+      </div>
+      <div class="ext-d-stats-row">
+        <div class="ext-d-stat-pill">
+          <p>Disarm</p>
+          <div class="ext-d-pips" id="ext-blue-disarm-pips"></div>
+        </div>
+        <div class="ext-d-stat-pill">
+          <p>Violations</p>
+          <div class="ext-d-pips" id="ext-blue-viol-pips"></div>
+        </div>
+      </div>
+      <div class="ext-d-adv" id="ext-blue-adv-banner">
+        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Advantage Point
+      </div>
+    </section>
+
+    <!-- Center: timer + round results -->
+    <section class="ext-d-col ext-d-col-center">
+      <div class="ext-d-round-badge" id="ext-round-badge">ROUND 1 / 3</div>
+      <div class="ext-d-timer" id="ext-timer">01:00</div>
+      <div class="ext-d-live" id="ext-live-row"><span class="ext-d-live-dot"></span> Live</div>
+      <div class="ext-d-ended" id="ext-ended" style="display:none">Match ended</div>
+      <div style="width:100%;max-width:420px;margin-top:8px">
+        <div class="ext-d-round-results-title">Round results</div>
+        <div class="ext-d-round-grid" id="ext-round-results"></div>
+      </div>
+      <div class="ext-d-category" id="ext-category">—</div>
+    </section>
+
+    <!-- Red corner — RIGHT -->
+    <section class="ext-d-col ext-d-col-red" id="ext-col-red">
+      <div class="ext-d-win-overlay" id="ext-red-win-overlay">
+        <span class="trophy" aria-hidden="true">🏆</span>
+        <div class="ext-d-win-txt">Winner!</div>
+      </div>
+      <div style="margin-bottom:8px">
+        <span class="ext-d-badge ext-d-badge-red">RED CORNER</span>
+      </div>
+      <div class="ext-d-row-head red">
+        <div class="ext-d-name-block red">
+          <div class="ext-d-name ext-d-name-red" id="ext-red-name">Red</div>
+          <div class="ext-d-team ext-d-team-red" id="ext-red-team"></div>
+        </div>
+        <div class="ext-d-photo">
+          <img id="ext-img-red" src="../arnis/public/red corner.png" alt="" onerror="this.style.display='none'" />
+          <div class="ext-d-photo-ph"></div>
+        </div>
+      </div>
+      <div class="ext-d-score-wrap">
+        <div style="width:100%">
+          <div class="ext-d-score-label">Score</div>
+          <div class="ext-d-score ext-d-score-num-red" id="ext-red-score">0</div>
+        </div>
+      </div>
+      <div class="ext-d-stats-row">
+        <div class="ext-d-stat-pill">
+          <p>Disarm</p>
+          <div class="ext-d-pips" id="ext-red-disarm-pips"></div>
+        </div>
+        <div class="ext-d-stat-pill">
+          <p>Violations</p>
+          <div class="ext-d-pips" id="ext-red-viol-pips"></div>
+        </div>
+      </div>
+      <div class="ext-d-adv" id="ext-red-adv-banner">
+        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Advantage Point
+      </div>
+    </section>
+  </div>
+
+  <div class="ext-d-upnext">
+    <h3>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      Up next
+    </h3>
+    <div class="ext-d-up-grid" id="ext-up-next"></div>
+  </div>
+
+  <footer class="ext-d-foot">
+    <div><span class="live-dot"></span> Live sync · Extension display</div>
+    <div>National KaliArena Championship · Match control</div>
+  </footer>
+</div>
+
+<!-- TOAST -->
+<div id="toast-container"></div>
+
+<!-- ROUND WINNER DIALOG -->
+<div class="overlay hidden" id="overlay-round">
+  <div class="dialog">
+    <div class="dialog-header">
+      <div class="dialog-title">🏆 Confirm Round <span id="dlg-rnd-num">1</span> Winner</div>
+      <div class="dialog-desc">Confirm the winner of this round before proceeding.</div>
+    </div>
+    <div class="dialog-body space-y-3">
+      <div class="result-grid">
+        <div class="result-box result-box-red" id="dlg-red-box">
+          <div class="text-sm text-muted mb-1">Red Corner</div>
+          <div class="result-score result-score-red" id="dlg-red-score">0</div>
+          <div id="dlg-red-adv" style="display:none;font-size:11px;color:var(--gold);margin-top:6px">★ Advantage</div>
+        </div>
+        <div class="result-box result-box-blue" id="dlg-blue-box">
+          <div class="text-sm text-muted mb-1">Blue Corner</div>
+          <div class="result-score result-score-blue" id="dlg-blue-score">0</div>
+          <div id="dlg-blue-adv" style="display:none;font-size:11px;color:var(--gold);margin-top:6px">★ Advantage</div>
+        </div>
+      </div>
+      <div class="result-box" id="dlg-confirm-box" style="background:var(--muted);border:2px solid var(--border);border-radius:var(--radius);text-align:center;padding:16px">
+        <div style="font-size:16px;font-weight:600" id="dlg-confirm-text">Confirm winner?</div>
+        <div class="text-xs text-muted mt-1">This will update round results.</div>
+      </div>
+    </div>
+    <div class="dialog-footer">
+      <button class="btn-outline" id="btn-round-cancel">Cancel</button>
+      <button id="btn-round-confirm">Confirm Win</button>
+    </div>
+  </div>
+</div>
+
+<!-- END MATCH DIALOG -->
+<div class="overlay hidden" id="overlay-end">
+  <div class="dialog">
+    <div class="dialog-header">
+      <div class="dialog-title">🏆 Match Results</div>
+      <div class="dialog-desc">Final score and winner determination</div>
+    </div>
+    <div class="dialog-body space-y-3">
+      <div class="result-grid">
+        <div class="result-box result-box-red">
+          <div class="text-sm text-muted mb-1">Red Corner</div>
+          <div class="result-score result-score-red" id="end-red-score">0</div>
+          <div id="end-red-adv" style="display:none;font-size:11px;color:var(--gold);margin-top:6px">★ Advantage</div>
+        </div>
+        <div class="result-box result-box-blue">
+          <div class="text-sm text-muted mb-1">Blue Corner</div>
+          <div class="result-score result-score-blue" id="end-blue-score">0</div>
+          <div id="end-blue-adv" style="display:none;font-size:11px;color:var(--gold);margin-top:6px">★ Advantage</div>
+        </div>
+      </div>
+      <div class="winner-box winner-box-tie" id="end-winner-box">
+        <div style="font-size:36px;margin-bottom:8px">🏆</div>
+        <div class="text-sm text-muted mb-1">Winner</div>
+        <div class="winner-name" id="end-winner-name">—</div>
+        <div id="end-adv-note" style="display:none;font-size:12px;color:var(--muted-fg);margin-top:6px">Won by Advantage Point (first scorer)</div>
+      </div>
+      <div class="summary-rows">
+        <div class="summary-row"><span class="text-muted">Total Rounds</span><span class="font-bold" id="end-rounds">1 / 3</span></div>
+        <div class="summary-row"><span class="text-muted">Red Violations</span><span class="font-bold" id="end-red-viol">0</span></div>
+        <div class="summary-row"><span class="text-muted">Blue Violations</span><span class="font-bold" id="end-blue-viol">0</span></div>
+      </div>
+    </div>
+    <div class="dialog-footer">
+      <button class="btn-outline" id="btn-end-close">Close</button>
+      <button class="btn-primary" id="btn-end-new-match">Start New Match</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  MODE: main control vs extension display (?display=extension)
+// ═══════════════════════════════════════════════════════
+const IS_EXTENSION = new URLSearchParams(location.search).get('display') === 'extension';
+if (IS_EXTENSION) document.body.classList.add('is-extension');
+
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+const getMatchRules = () => {
+  try { const s = localStorage.getItem("eventMatchRules"); if(s) return JSON.parse(s); } catch {}
+  return { numRounds: 3, timePerRound: 60 };
+};
+const rules = getMatchRules();
+const MAX_ROUNDS = rules.numRounds;
+const INIT_TIME  = rules.timePerRound;
+
+let state = {
+  round: 1,
+  timeLeft: INIT_TIME,
+  isActive: false,
+  isEditingTime: false,
+  redScore: 0, blueScore: 0,
+  redViol: 0,  blueViol: 0,
+  redDisarm: 0, blueDisarm: 0,
+  redAdv: false, blueAdv: false,
+  firstScorer: null,
+  roundWinners: [],
+  matchEnded: false,
+  winner: null,
+  pendingRoundWinner: null,
+  matchQueue: [],
+  currentMatch: null,
+};
+let timerInterval = null;
+
+// ═══════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════
+const fmt = s => `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+const $ = id => document.getElementById(id);
+
+function extFillPipsViol(containerId, count) {
+  const el = $(containerId);
+  if (!el) return;
+  const svg = '<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+  let html = '';
+  for (let i = 1; i <= 3; i++) {
+    const on = count >= i;
+    html += `<div class="ext-d-pip viol${on ? ' on' : ''}">${on ? svg : ''}</div>`;
+  }
+  el.innerHTML = html;
+}
+
+function extFillPipsDisarm(containerId, count) {
+  const el = $(containerId);
+  if (!el) return;
+  let html = '';
+  for (let i = 1; i <= 2; i++) {
+    html += `<div class="ext-d-pip disarm${count >= i ? ' on' : ''}"></div>`;
+  }
+  el.innerHTML = html;
+}
+
+function renderExtensionFromStorage() {
+  if (!IS_EXTENSION) return;
+  let raw = {};
+  try { raw = JSON.parse(localStorage.getItem('matchState') || '{}'); } catch { return; }
+  let rulesEx = {};
+  try { rulesEx = JSON.parse(localStorage.getItem('eventMatchRules') || '{}'); } catch { rulesEx = {}; }
+  const maxR = rulesEx.numRounds || MAX_ROUNDS;
+  const cm = raw.currentMatch;
+  const rnd = raw.round ?? 1;
+  const bout = cm?.bout || cm?.id || '—';
+  if ($('ext-header-bout')) $('ext-header-bout').textContent = bout;
+
+  const catBits = [cm?.category].filter(Boolean);
+  if ($('ext-category')) $('ext-category').textContent = catBits.length ? catBits[0] : 'Full combat';
+
+  if ($('ext-red-name')) $('ext-red-name').textContent = cm?.redCorner?.name || 'Red corner';
+  if ($('ext-red-team')) $('ext-red-team').textContent = cm?.redCorner?.team || '';
+  if ($('ext-blue-name')) $('ext-blue-name').textContent = cm?.blueCorner?.name || 'Blue corner';
+  if ($('ext-blue-team')) $('ext-blue-team').textContent = cm?.blueCorner?.team || '';
+
+  const rs = raw.redScore ?? 0;
+  const bs = raw.blueScore ?? 0;
+  const redViol = raw.redViol ?? 0;
+  const blueViol = raw.blueViol ?? 0;
+  const redDisarm = raw.redDisarm ?? 0;
+  const blueDisarm = raw.blueDisarm ?? 0;
+  const redAdv = !!raw.redAdv;
+  const blueAdv = !!raw.blueAdv;
+  const ended = !!raw.matchEnded;
+  const winner = raw.winner;
+  const active = !!raw.isActive;
+
+  extFillPipsViol('ext-red-viol-pips', redViol);
+  extFillPipsViol('ext-blue-viol-pips', blueViol);
+  extFillPipsDisarm('ext-red-disarm-pips', redDisarm);
+  extFillPipsDisarm('ext-blue-disarm-pips', blueDisarm);
+
+  const rsEl = $('ext-red-score');
+  if (rsEl) {
+    rsEl.textContent = String(rs);
+    rsEl.classList.remove('winner-glow', 'loser-dim');
+    if (ended && winner === 'red') rsEl.classList.add('winner-glow');
+    else if (ended && winner === 'blue') rsEl.classList.add('loser-dim');
+  }
+  const bsEl = $('ext-blue-score');
+  if (bsEl) {
+    bsEl.textContent = String(bs);
+    bsEl.classList.remove('winner-glow', 'loser-dim');
+    if (ended && winner === 'blue') bsEl.classList.add('winner-glow');
+    else if (ended && winner === 'red') bsEl.classList.add('loser-dim');
+  }
+
+  const colB = $('ext-col-blue');
+  const colR = $('ext-col-red');
+  if (colB) {
+    colB.classList.remove('win-highlight', 'lose-dim');
+    if (ended && winner === 'blue') colB.classList.add('win-highlight');
+    else if (ended && winner === 'red') colB.classList.add('lose-dim');
+  }
+  if (colR) {
+    colR.classList.remove('win-highlight', 'lose-dim');
+    if (ended && winner === 'red') colR.classList.add('win-highlight');
+    else if (ended && winner === 'blue') colR.classList.add('lose-dim');
+  }
+
+  const owB = $('ext-blue-win-overlay');
+  const owR = $('ext-red-win-overlay');
+  if (owB) owB.classList.toggle('show', ended && winner === 'blue');
+  if (owR) owR.classList.toggle('show', ended && winner === 'red');
+
+  if ($('ext-blue-adv-banner')) $('ext-blue-adv-banner').classList.toggle('visible', blueAdv);
+  if ($('ext-red-adv-banner')) $('ext-red-adv-banner').classList.toggle('visible', redAdv);
+
+  if ($('ext-round-badge')) $('ext-round-badge').textContent = `ROUND ${rnd} / ${maxR}`;
+
+  const tl = raw.timeLeft ?? 0;
+  const te = $('ext-timer');
+  if (te) {
+    te.textContent = fmt(tl);
+    te.classList.toggle('warn', tl <= 10 && !ended);
+  }
+  if ($('ext-ended')) $('ext-ended').style.display = ended ? 'block' : 'none';
+  if ($('ext-live-row')) $('ext-live-row').classList.toggle('visible', active && !ended);
+
+  const rw = Array.isArray(raw.roundWinners) ? raw.roundWinners : [];
+  const rg = $('ext-round-results');
+  if (rg) {
+    let html = '';
+    for (let roundNum = 1; roundNum <= maxR; roundNum++) {
+      const result = rw.find((x) => x.round === roundNum);
+      let cls = 'ext-d-rnd-box';
+      if (result) cls += result.winner === 'red' ? ' filled-red' : ' filled-blue';
+      else if (roundNum === rnd) cls += ' current';
+      const inner = result ? (result.winner === 'red' ? 'R' : 'B') : String(roundNum);
+      html += `<div class="ext-d-rnd-cell"><div class="${cls}">${inner}</div><span class="ext-d-rnd-lbl">R${roundNum}</span></div>`;
+    }
+    rg.innerHTML = html;
+  }
+
+  const up = $('ext-up-next');
+  if (up) {
+    let q = [];
+    try {
+      q = JSON.parse(localStorage.getItem('matchQueue') || '[]');
+    } catch { q = []; }
+    const upcoming = Array.isArray(q) ? q.filter((m) => m.status === 'upcoming').slice(0, 3) : [];
+    if (!upcoming.length) {
+      up.innerHTML = '<div class="ext-d-up-cat" style="grid-column:1/-1;text-align:center;padding:12px">No upcoming bouts in queue</div>';
+    } else {
+      up.innerHTML = upcoming
+        .map((m) => {
+          const boutLabel = m.bout || m.id || '—';
+          const redN = m.redCorner?.name || 'Red';
+          const blueN = m.blueCorner?.name || 'Blue';
+          const cat = m.category || '';
+          return `<div class="ext-d-up-card"><span class="bout">${boutLabel}</span><div class="ext-d-up-names"><span class="nr">${redN}</span><span class="vr">VS</span><span class="nb">${blueN}</span></div><div class="ext-d-up-cat">${cat}</div></div>`;
+        })
+        .join('');
+    }
+  }
+}
+function showToast(title, desc='') {
+  const c = $('toast-container');
+  const t = document.createElement('div'); t.className='toast';
+  t.innerHTML = `<div class="toast-title">${title}</div>${desc?`<div class="toast-desc">${desc}</div>`:''}`;
+  c.appendChild(t); setTimeout(()=>t.remove(), 3500);
+}
+function saveState() {
+  if (IS_EXTENSION) return;
+  // Persist full state (including isActive) so display / extension views stay in sync
+  localStorage.setItem('matchState', JSON.stringify(state));
+  window.dispatchEvent(new Event('storage'));
+}
+
+// ═══════════════════════════════════════════════════════
+//  QUEUE
+// ═══════════════════════════════════════════════════════
+function loadQueue() {
+  const DEMO = [
+    { id:'MAT-024', bout:'#24', status:'live',
+      redCorner:{name:'Janzen Egnisaban',team:'CCS Arnis Team'},
+      blueCorner:{name:'Zoren Nicdao',team:'SIKHADA ARNIS TEAM'},
+      category:'Featherweight', round:'Quarter Finals', court:'Court A' },
+    { id:'MAT-025', bout:'#25', status:'upcoming',
+      redCorner:{name:'Reyes',team:'Manila Warriors'},
+      blueCorner:{name:'Luna',team:'Quezon City Fighters'},
+      category:'Bantamweight', round:'Quarter Finals', court:'Court A' },
+    { id:'MAT-026', bout:'#26', status:'upcoming',
+      redCorner:{name:'Gomez',team:'Iloilo Arnis Club'},
+      blueCorner:{name:'Diaz',team:'Bacolod Sticks'},
+      category:'Lightweight', round:'Quarter Finals', court:'Court B' },
+  ];
+  try {
+    const s = localStorage.getItem('matchQueue');
+    state.matchQueue = s ? JSON.parse(s) : DEMO;
+  } catch { state.matchQueue = DEMO; }
+  if (!state.matchQueue.length) state.matchQueue = DEMO;
+  state.currentMatch = state.matchQueue.find(m=>m.status==='live') || null;
+
+  // Update fighter names from current match
+  if (state.currentMatch) {
+    $('red-name').textContent  = state.currentMatch.redCorner?.name  || 'Red Corner';
+    $('red-team').textContent  = state.currentMatch.redCorner?.team  || '';
+    $('blue-name').textContent = state.currentMatch.blueCorner?.name || 'Blue Corner';
+    $('blue-team').textContent = state.currentMatch.blueCorner?.team || '';
+  }
+  renderQueue();
+}
+
+function renderQueue() {
+  const el = $('queue-list');
+  let html = '';
+  if (state.currentMatch) {
+    html += `<div class="queue-current">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="badge badge-red" style="font-size:9px">CURRENT</span>
+        <span class="text-xs font-bold">${state.currentMatch.bout}</span>
+      </div>
+      <div class="queue-name">${state.currentMatch.redCorner?.name||'Red'} vs ${state.currentMatch.blueCorner?.name||'Blue'}</div>
+      <div class="queue-meta">${state.currentMatch.category||''} • Round ${state.round}/${MAX_ROUNDS}</div>
+    </div>`;
+  }
+  state.matchQueue.filter(m=>m.status==='upcoming').slice(0,4).forEach(m=>{
+    html += `<div class="queue-upcoming">
+      <svg viewBox="0 0 24 24" style="color:var(--muted-fg);opacity:.4;flex-shrink:0"><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="3" y1="3" x2="21" y2="3"/><line x1="3" y1="21" x2="21" y2="21"/></svg>
+      <div style="min-width:0">
+        <div class="queue-meta">Bout ${m.bout}</div>
+        <div class="queue-name">${m.redCorner?.name||'Red'} vs ${m.blueCorner?.name||'Blue'}</div>
+        <div class="queue-meta">${m.category||''}</div>
+      </div>
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════════════
+function render() {
+  const { round, timeLeft, isActive, redScore, blueScore, redViol, blueViol,
+          redDisarm, blueDisarm, redAdv, blueAdv, roundWinners, matchEnded, winner } = state;
+
+  // Timer
+  const display = $('timer-display');
+  display.textContent = fmt(timeLeft);
+  display.classList.toggle('timer-danger', timeLeft <= 10 && !matchEnded);
+  $('timer-ended-label').style.display = matchEnded ? '' : 'none';
+
+  // Round
+  $('round-label').textContent = `ROUND ${round} of ${MAX_ROUNDS}`;
+  document.querySelectorAll('.rnd-num').forEach(el=>el.textContent=round);
+  $('rules-badge').textContent = `${MAX_ROUNDS}R • ${fmt(INIT_TIME)}`;
+
+  // Play/Pause icons
+  $('play-icon').style.display  = isActive ? 'none' : '';
+  $('pause-icon').style.display = isActive ? '' : 'none';
+  const ppBtn = $('btn-play-pause');
+  ppBtn.className = isActive
+    ? 'btn-icon-lg btn-icon' + ' counter-btn'
+    : 'btn-green btn-icon-lg btn-icon';
+  ppBtn.style.background = isActive ? '#6b7280' : 'var(--green)';
+  ppBtn.style.borderColor = isActive ? '#6b7280' : 'var(--green)';
+  ppBtn.style.color = '#fff';
+
+  // Scores
+  $('blue-score').textContent = blueScore;
+  $('red-score').textContent  = redScore;
+  $('sidebar-blue-score').textContent = blueScore;
+  $('sidebar-red-score').textContent  = redScore;
+
+  // Remove point buttons
+  $('btn-blue-remove').style.display = blueScore > 0 ? '' : 'none';
+  $('btn-red-remove').style.display  = redScore  > 0 ? '' : 'none';
+
+  // Advantage
+  const showBlueAdv = blueAdv;
+  const showRedAdv  = redAdv;
+  $('blue-adv-star').style.display = showBlueAdv ? '' : 'none';
+  $('red-adv-star').style.display  = showRedAdv  ? '' : 'none';
+  $('sidebar-blue-adv').style.display = showBlueAdv ? '' : 'none';
+  $('sidebar-red-adv').style.display  = showRedAdv  ? '' : 'none';
+  $('blue-adv-label').style.display = showBlueAdv ? '' : 'none';
+  $('red-adv-label').style.display  = showRedAdv  ? '' : 'none';
+  $('btn-blue-adv').style.background = showBlueAdv ? 'var(--gold)' : '';
+  $('btn-blue-adv').style.borderColor = showBlueAdv ? 'var(--gold)' : '';
+  $('btn-blue-adv').style.color = showBlueAdv ? '#fff' : '';
+  $('btn-red-adv').style.background = showRedAdv ? 'var(--gold)' : '';
+  $('btn-red-adv').style.borderColor = showRedAdv ? 'var(--gold)' : '';
+  $('btn-red-adv').style.color = showRedAdv ? '#fff' : '';
+
+  // Tie note
+  $('tie-note').style.display = (redScore===blueScore && (redAdv||blueAdv)) ? '' : 'none';
+
+  // Violations pips
+  document.querySelectorAll('[data-corner="blue"][data-i]').forEach(pip=>{
+    pip.classList.toggle('pip-red', blueViol >= +pip.dataset.i);
+  });
+  document.querySelectorAll('[data-corner="red"][data-i]').forEach(pip=>{
+    pip.classList.toggle('pip-red', redViol >= +pip.dataset.i);
+  });
+
+  // Disarm pips
+  document.querySelectorAll('[data-corner="blue"][data-type="disarm"]').forEach(pip=>{
+    pip.classList.toggle('pip-orange', blueDisarm >= +pip.dataset.i);
+  });
+  document.querySelectorAll('[data-corner="red"][data-type="disarm"]').forEach(pip=>{
+    pip.classList.toggle('pip-orange', redDisarm >= +pip.dataset.i);
+  });
+
+  // Round winner buttons highlight
+  const redRoundWin  = roundWinners.find(r=>r.round===round&&r.winner==='red');
+  const blueRoundWin = roundWinners.find(r=>r.round===round&&r.winner==='blue');
+  const btnRedWon  = $('btn-red-won');
+  const btnBlueWon = $('btn-blue-won');
+  btnRedWon.className  = 'btn-sm w-full ' + (redRoundWin  ? 'btn-red'  : 'btn-outline');
+  btnBlueWon.className = 'btn-sm w-full ' + (blueRoundWin ? 'btn-blue' : 'btn-outline');
+  btnRedWon.style.height = btnBlueWon.style.height = '36px';
+
+  // Next Round button
+  const canNextRound = round < MAX_ROUNDS && !matchEnded && !isActive;
+  $('btn-next-round').style.display = canNextRound ? '' : 'none';
+
+  // Next Match buttons
+  const showNextMatch = (round===MAX_ROUNDS && roundWinners.length===MAX_ROUNDS && !matchEnded) || matchEnded;
+  $('btn-next-match-timer').style.display = showNextMatch ? '' : 'none';
+  $('btn-next-match-header').style.display = showNextMatch ? '' : 'none';
+
+  // End match button
+  $('btn-end-match').disabled = matchEnded;
+
+  // Disable all scoring when match ended
+  const disabled = matchEnded;
+  ['btn-blue-add','btn-blue-remove','btn-red-add','btn-red-remove',
+   'btn-blue-viol-inc','btn-blue-viol-dec','btn-red-viol-inc','btn-red-viol-dec',
+   'btn-blue-disarm-inc','btn-blue-disarm-dec','btn-red-disarm-inc','btn-red-disarm-dec',
+   'btn-blue-adv','btn-red-adv','btn-play-pause','btn-reset',
+   'btn-red-won','btn-blue-won','btn-next-round'
+  ].forEach(id=>{ const b=$( id); if(b) b.disabled=disabled; });
+
+  // Court badge
+  const court = localStorage.getItem('currentCourt');
+  const cb = $('court-badge');
+  cb.textContent = court || '';
+  cb.style.display = court ? '' : 'none';
+
+  renderQueue();
+  saveState();
+}
+
+// ═══════════════════════════════════════════════════════
+//  TIMER
+// ═══════════════════════════════════════════════════════
+function startTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(()=>{
+    if (!state.isActive || state.matchEnded) { clearInterval(timerInterval); return; }
+    state.timeLeft--;
+    if (state.timeLeft <= 0) {
+      state.timeLeft = 0;
+      state.isActive = false;
+      clearInterval(timerInterval);
+      handleRoundEnd();
+    }
+    render();
+  }, 1000);
+}
+
+function handleRoundEnd() {
+  if (state.round < MAX_ROUNDS) {
+    setTimeout(()=>{
+      advanceRound();
+      showToast(`Round ${state.round-1} ended`, `Starting Round ${state.round}... Scores reset.`);
+    }, 1000);
+  } else {
+    handleEndMatch();
+  }
+}
+
+function advanceRound(showMsg=false) {
+  const prevRound = state.round;
+  state.round++;
+  state.timeLeft = INIT_TIME;
+  state.isActive = false;
+  state.redScore = state.blueScore = 0;
+  state.redAdv = state.blueAdv = false;
+  state.firstScorer = null;
+  if (showMsg) {
+    const m=Math.floor(INIT_TIME/60), s=INIT_TIME%60;
+    showToast(`Round ${state.round} Started`, `Timer reset to ${m}:${String(s).padStart(2,'0')}. Scores reset.`);
+  }
+  render();
+}
+
+// ═══════════════════════════════════════════════════════
+//  SCORING
+// ═══════════════════════════════════════════════════════
+function handleScore(corner) {
+  if (state.matchEnded) return;
+  if (corner==='red') state.redScore++;
+  else state.blueScore++;
+  // First scorer gets advantage auto
+  if (state.firstScorer===null && !state.redAdv && !state.blueAdv) {
+    state.firstScorer = corner;
+    if (corner==='red') { state.redAdv=true; state.blueAdv=false; }
+    else { state.blueAdv=true; state.redAdv=false; }
+    showToast('Advantage Point Awarded', `${corner==='red'?'Red':'Blue'} corner scored first!`);
+  }
+  render();
+}
+
+// ═══════════════════════════════════════════════════════
+//  END MATCH
+// ═══════════════════════════════════════════════════════
+function determineWinner() {
+  const { redScore, blueScore, redAdv, blueAdv } = state;
+  if (redScore > blueScore) state.winner = 'red';
+  else if (blueScore > redScore) state.winner = 'blue';
+  else {
+    if (redAdv) state.winner = 'red';
+    else if (blueAdv) state.winner = 'blue';
+    else state.winner = 'tie';
+  }
+}
+
+function handleEndMatch() {
+  if (!confirm('Are you sure you want to end this match? This action cannot be undone.')) return;
+  confirmAndEndMatch();
+}
+
+function confirmAndEndMatch() {
+  state.matchEnded = true;
+  state.isActive = false;
+  clearInterval(timerInterval);
+  determineWinner();
+  render();
+  openEndDialog();
+}
+
+function openEndDialog() {
+  const w = state.winner;
+  $('end-red-score').textContent  = state.redScore;
+  $('end-blue-score').textContent = state.blueScore;
+  $('end-red-adv').style.display  = state.redAdv  ? '' : 'none';
+  $('end-blue-adv').style.display = state.blueAdv ? '' : 'none';
+  $('end-rounds').textContent = `${state.round} / ${MAX_ROUNDS}`;
+  $('end-red-viol').textContent  = state.redViol;
+  $('end-blue-viol').textContent = state.blueViol;
+
+  const box = $('end-winner-box');
+  box.className = 'winner-box ' + (w==='red'?'winner-box-red':w==='blue'?'winner-box-blue':'winner-box-tie');
+  const nameEl = $('end-winner-name');
+  if (w==='red') { nameEl.textContent = `${$('red-name').textContent} (Red Corner)`; nameEl.className='winner-name winner-name-red'; }
+  else if (w==='blue') { nameEl.textContent = `${$('blue-name').textContent} (Blue Corner)`; nameEl.className='winner-name winner-name-blue'; }
+  else { nameEl.textContent = 'No Winner — Tie Match'; nameEl.className='winner-name'; }
+  const isAdvWin = state.redScore===state.blueScore && w!=='tie';
+  $('end-adv-note').style.display = isAdvWin ? '' : 'none';
+
+  $('overlay-end').classList.remove('hidden');
+}
+
+// ═══════════════════════════════════════════════════════
+//  ROUND WINNER DIALOG
+// ═══════════════════════════════════════════════════════
+function handleRoundWinnerClick(corner) {
+  state.pendingRoundWinner = corner;
+  $('dlg-rnd-num').textContent = state.round;
+  $('dlg-red-score').textContent  = state.redScore;
+  $('dlg-blue-score').textContent = state.blueScore;
+  $('dlg-red-adv').style.display  = state.redAdv  ? '' : 'none';
+  $('dlg-blue-adv').style.display = state.blueAdv ? '' : 'none';
+
+  const cb = $('dlg-confirm-box');
+  if (corner==='red') {
+    cb.style.background='var(--red-bg)'; cb.style.borderColor='var(--red)';
+    $('dlg-confirm-text').innerHTML='Mark <span style="color:var(--red)">Red</span> Corner as winner of Round '+state.round+'?';
+  } else {
+    cb.style.background='var(--blue-bg)'; cb.style.borderColor='var(--blue)';
+    $('dlg-confirm-text').innerHTML='Mark <span style="color:var(--blue)">Blue</span> Corner as winner of Round '+state.round+'?';
+  }
+
+  const confBtn = $('btn-round-confirm');
+  confBtn.className = corner==='red' ? 'btn-red' : 'btn-blue';
+  confBtn.textContent = `Confirm ${corner==='red'?'Red':'Blue'} Won`;
+
+  $('overlay-round').classList.remove('hidden');
+}
+
+function confirmRoundWinner() {
+  const corner = state.pendingRoundWinner;
+  if (!corner) return;
+  state.roundWinners = state.roundWinners.filter(r=>r.round!==state.round);
+  state.roundWinners.push({ round: state.round, winner: corner });
+  showToast(`Round ${state.round} Winner`, `${corner==='red'?'Red':'Blue'} Corner won Round ${state.round}`);
+  $('overlay-round').classList.add('hidden');
+  state.pendingRoundWinner = null;
+
+  const allDone = state.roundWinners.length===MAX_ROUNDS && state.round===MAX_ROUNDS;
+  if (state.round < MAX_ROUNDS) {
+    setTimeout(()=>{ advanceRound(true); }, 1500);
+  } else if (allDone) {
+    setTimeout(()=>{
+      showToast('All Rounds Complete', 'Ending match automatically...');
+      setTimeout(()=>confirmAndEndMatch(), 2000);
+    }, 1500);
+  }
+  render();
+}
+
+// ═══════════════════════════════════════════════════════
+//  NEW MATCH
+// ═══════════════════════════════════════════════════════
+function handleNewMatch() {
+  // Advance queue
+  try {
+    let q = state.matchQueue;
+    const liveIdx = q.findIndex(m=>m.status==='live');
+    if (liveIdx!==-1) {
+      q[liveIdx] = { ...q[liveIdx], status:'completed', winner:state.winner, redScore:state.redScore, blueScore:state.blueScore };
+      const nextIdx = q.findIndex((m,i)=>i>liveIdx&&m.status==='upcoming');
+      if (nextIdx!==-1) q[nextIdx].status='live';
+    }
+    localStorage.setItem('matchQueue', JSON.stringify(q));
+    window.dispatchEvent(new Event('queueUpdate'));
+    window.dispatchEvent(new Event('storage'));
+  } catch {}
+
+  // Reset state
+  Object.assign(state, {
+    round:1, timeLeft:INIT_TIME, isActive:false, isEditingTime:false,
+    redScore:0, blueScore:0, redViol:0, blueViol:0, redDisarm:0, blueDisarm:0,
+    redAdv:false, blueAdv:false, firstScorer:null, roundWinners:[],
+    matchEnded:false, winner:null, pendingRoundWinner:null
+  });
+  clearInterval(timerInterval);
+  $('overlay-end').classList.add('hidden');
+  loadQueue();
+  showToast('Next match started', 'Match queue updated. New match is now live.');
+  render();
+}
+
+// ═══════════════════════════════════════════════════════
+//  INLINE TIME EDITING
+// ═══════════════════════════════════════════════════════
+function openTimeEdit() {
+  if (state.isActive || state.matchEnded) return;
+  state.isEditingTime = true;
+  const input = $('timer-input');
+  const display = $('timer-display');
+  display.style.display = 'none';
+  input.style.display = '';
+  input.value = fmt(state.timeLeft);
+  $('timer-edit-hint').style.display = '';
+  input.focus(); input.select();
+}
+function closeTimeEdit(save=false) {
+  const input = $('timer-input');
+  if (save) {
+    const val = input.value.trim();
+    const parts = val.split(':');
+    let total = 0;
+    if (parts.length===2) total = (parseInt(parts[0])||0)*60 + (parseInt(parts[1])||0);
+    else total = parseInt(val)||0;
+    if (total>=0 && total<=600) state.timeLeft = total;
+  }
+  state.isEditingTime = false;
+  $('timer-display').style.display = '';
+  input.style.display = 'none';
+  $('timer-edit-hint').style.display = 'none';
+  render();
+}
+
+// ═══════════════════════════════════════════════════════
+//  EVENT LISTENERS (main control only — extension is read-only)
+// ═══════════════════════════════════════════════════════
+if (!IS_EXTENSION) {
+// Timer display click
+$('timer-display').addEventListener('click', ()=>{ if(!state.isActive&&!state.matchEnded) openTimeEdit(); });
+$('timer-input').addEventListener('keydown', e=>{
+  if (e.key==='Enter') closeTimeEdit(true);
+  else if (e.key==='Escape') closeTimeEdit(false);
+});
+$('timer-input').addEventListener('blur', ()=>{ if(state.isEditingTime) closeTimeEdit(false); });
+
+// Play/Pause
+$('btn-play-pause').addEventListener('click', ()=>{
+  if (state.matchEnded) return;
+  state.isActive = !state.isActive;
+  if (state.isActive) startTimer();
+  else clearInterval(timerInterval);
+  render();
+});
+
+// Reset
+$('btn-reset').addEventListener('click', ()=>{
+  state.isActive = false; state.timeLeft = INIT_TIME;
+  clearInterval(timerInterval); render();
+});
+
+// Scores
+$('btn-blue-add').addEventListener('click', ()=>handleScore('blue'));
+$('btn-red-add').addEventListener('click',  ()=>handleScore('red'));
+$('btn-blue-remove').addEventListener('click', ()=>{ state.blueScore=Math.max(0,state.blueScore-1); render(); });
+$('btn-red-remove').addEventListener('click',  ()=>{ state.redScore =Math.max(0,state.redScore-1);  render(); });
+
+// Violations
+$('btn-blue-viol-inc').addEventListener('click', ()=>{ state.blueViol=Math.min(3,state.blueViol+1); render(); });
+$('btn-blue-viol-dec').addEventListener('click', ()=>{ state.blueViol=Math.max(0,state.blueViol-1); render(); });
+$('btn-red-viol-inc').addEventListener('click',  ()=>{ state.redViol =Math.min(3,state.redViol+1);  render(); });
+$('btn-red-viol-dec').addEventListener('click',  ()=>{ state.redViol =Math.max(0,state.redViol-1);  render(); });
+
+// Disarms
+$('btn-blue-disarm-inc').addEventListener('click', ()=>{
+  const n = Math.min(2, state.blueDisarm+1); state.blueDisarm = n;
+  if (n>=2 && confirm('Blue Corner achieved 2 disarms! End match and declare Blue Corner as winner?')) {
+    showToast('Blue Corner Wins!', '2 disarms achieved'); confirmAndEndMatch();
+  } else if (n>=2) { state.blueDisarm=1; }
+  render();
+});
+$('btn-blue-disarm-dec').addEventListener('click', ()=>{ state.blueDisarm=Math.max(0,state.blueDisarm-1); render(); });
+$('btn-red-disarm-inc').addEventListener('click', ()=>{
+  const n = Math.min(2, state.redDisarm+1); state.redDisarm = n;
+  if (n>=2 && confirm('Red Corner achieved 2 disarms! End match and declare Red Corner as winner?')) {
+    showToast('Red Corner Wins!', '2 disarms achieved'); confirmAndEndMatch();
+  } else if (n>=2) { state.redDisarm=1; }
+  render();
+});
+$('btn-red-disarm-dec').addEventListener('click', ()=>{ state.redDisarm=Math.max(0,state.redDisarm-1); render(); });
+
+// Advantage
+$('btn-blue-adv').addEventListener('click', ()=>{
+  if (state.blueAdv) { state.firstScorer=null; state.blueAdv=false; state.redAdv=false; showToast('Advantage Removed','Blue corner advantage removed.'); }
+  else { state.firstScorer='blue'; state.blueAdv=true; state.redAdv=false; showToast('Advantage Awarded','Blue corner has the Advantage Point.'); }
+  render();
+});
+$('btn-red-adv').addEventListener('click', ()=>{
+  if (state.redAdv) { state.firstScorer=null; state.redAdv=false; state.blueAdv=false; showToast('Advantage Removed','Red corner advantage removed.'); }
+  else { state.firstScorer='red'; state.redAdv=true; state.blueAdv=false; showToast('Advantage Awarded','Red corner has the Advantage Point.'); }
+  render();
+});
+
+// Round winner
+$('btn-red-won').addEventListener('click',  ()=>handleRoundWinnerClick('red'));
+$('btn-blue-won').addEventListener('click', ()=>handleRoundWinnerClick('blue'));
+$('btn-round-confirm').addEventListener('click', confirmRoundWinner);
+$('btn-round-cancel').addEventListener('click', ()=>{ $('overlay-round').classList.add('hidden'); state.pendingRoundWinner=null; });
+
+// Next round
+$('btn-next-round').addEventListener('click', ()=>{
+  if (state.round < MAX_ROUNDS && !state.matchEnded && !state.isActive) { advanceRound(true); }
+});
+
+// End match
+$('btn-end-match').addEventListener('click', handleEndMatch);
+
+// End dialog
+$('btn-end-close').addEventListener('click', ()=>$('overlay-end').classList.add('hidden'));
+$('btn-end-new-match').addEventListener('click', handleNewMatch);
+$('btn-next-match-header').addEventListener('click', handleNewMatch);
+$('btn-next-match-timer').addEventListener('click', handleNewMatch);
+
+// Close dialogs on overlay click
+['overlay-round','overlay-end'].forEach(id=>{
+  $(id).addEventListener('click', e=>{ if(e.target===e.currentTarget) $(id).classList.add('hidden'); });
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e=>{
+  if (['INPUT','TEXTAREA'].includes(e.target.tagName)) return;
+  if (e.code==='Space') { e.preventDefault(); if(!state.matchEnded){ state.isActive=!state.isActive; if(state.isActive)startTimer(); else clearInterval(timerInterval); render(); } }
+  else if (e.key.toLowerCase()==='r') { e.preventDefault(); if(!state.matchEnded){ state.isActive=false; state.timeLeft=INIT_TIME; clearInterval(timerInterval); render(); } }
+  else if (e.key.toLowerCase()==='n') { e.preventDefault(); if(!state.matchEnded&&state.round<MAX_ROUNDS&&!state.isActive) advanceRound(true); }
+});
+
+} // end !IS_EXTENSION listeners
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+if (IS_EXTENSION) {
+  renderExtensionFromStorage();
+  setInterval(renderExtensionFromStorage, 200);
+  window.addEventListener('storage', renderExtensionFromStorage);
+} else {
+  const le = $('link-extension');
+  if (le) le.href = new URL('?display=extension', window.location.href).href;
+  loadQueue();
+  render();
+}
+</script>
+</body>
+</html>
