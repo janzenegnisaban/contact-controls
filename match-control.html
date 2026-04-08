@@ -891,6 +891,244 @@
       box-shadow: 0 0 0 3px var(--su-gold-muted);
       flex-shrink: 0;
     }
+    #setup-root .setup-section.setup-section-brackets {
+      border-left-color: #16a34a;
+      background: linear-gradient(180deg, #f7fef9 0%, var(--su-muted) 100%);
+    }
+    #setup-root .setup-section.setup-section-brackets .setup-section-title::before {
+      background: #16a34a;
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.22);
+    }
+    #setup-root .setup-categories-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    #setup-root .setup-category-card {
+      border: 1px solid var(--su-border);
+      border-radius: var(--su-radius-input);
+      padding: 12px;
+      background: var(--su-muted);
+    }
+    #setup-root .setup-category-card-head {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    @media (min-width: 640px) {
+      #setup-root .setup-category-card-head {
+        grid-template-columns: 1.2fr 1fr 1fr auto;
+        align-items: end;
+      }
+    }
+    #setup-root .setup-category-remove {
+      grid-column: 1 / -1;
+      justify-self: start;
+      padding: 6px 10px;
+      font-size: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(185, 28, 28, 0.45);
+      background: rgba(254, 226, 226, 0.5);
+      color: #991b1b;
+      cursor: pointer;
+    }
+    @media (min-width: 640px) {
+      #setup-root .setup-category-remove {
+        grid-column: auto;
+        align-self: end;
+      }
+    }
+    #setup-root .setup-player-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 8px;
+      align-items: end;
+      margin-bottom: 8px;
+    }
+    #setup-root .setup-player-remove {
+      padding: 6px 8px;
+      font-size: 11px;
+      border-radius: 8px;
+      border: 1px solid var(--su-border);
+      background: #fff;
+      cursor: pointer;
+    }
+    #setup-root .setup-players-head {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--su-text-secondary);
+      margin: 10px 0 6px;
+    }
+    #setup-root .setup-add-fighter {
+      margin-top: 6px;
+      font-size: 12px;
+    }
+    #setup-root .setup-bracket-preview {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: var(--su-radius-input);
+      border: 1px dashed var(--su-border);
+      background: rgba(255, 255, 255, 0.6);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    #setup-root .setup-bracket-preview ul {
+      margin: 8px 0 0;
+      padding-left: 1.1rem;
+    }
+    #setup-root .setup-bracket-preview li {
+      margin-bottom: 4px;
+    }
+    #setup-root .setup-bracket-format-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    #setup-root .setup-bracket-main-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 560px) {
+      #setup-root .setup-bracket-main-row {
+        grid-template-columns: 1fr;
+      }
+    }
+    #setup-root .setup-bracket-main-card {
+      position: relative;
+      display: block;
+      cursor: pointer;
+      border-radius: 12px;
+      border: 2px solid var(--su-border);
+      background: #fff;
+      padding: 12px 12px 14px;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    #setup-root .setup-bracket-main-card:hover {
+      border-color: color-mix(in srgb, var(--blue-corner) 35%, var(--su-border));
+    }
+    #setup-root .setup-bracket-main-card input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+    #setup-root .setup-bracket-main-card:has(input:checked) {
+      border-color: color-mix(in srgb, var(--blue-corner) 55%, var(--su-border));
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+    }
+    #setup-root .setup-bracket-mini-svg {
+      height: 72px;
+      margin-bottom: 8px;
+      color: #71717a;
+    }
+    #setup-root .setup-bracket-main-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--su-text);
+      margin: 0 0 4px;
+    }
+    #setup-root .setup-bracket-main-sub {
+      font-size: 11px;
+      color: var(--su-text-secondary);
+      line-height: 1.35;
+      margin: 0;
+    }
+    #setup-root .setup-bracket-sub-panel {
+      border-radius: 12px;
+      border: 1px solid var(--su-border);
+      background: rgba(255, 255, 255, 0.75);
+      padding: 10px 10px 12px;
+    }
+    #setup-root .setup-bracket-sub-panel[hidden] {
+      display: none !important;
+    }
+    #setup-root .setup-bracket-sub-title {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--su-text-secondary);
+      margin: 0 0 8px;
+    }
+    #setup-root .setup-bracket-sub-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    @media (max-width: 560px) {
+      #setup-root .setup-bracket-sub-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    #setup-root .setup-bracket-opt {
+      position: relative;
+      display: block;
+      cursor: pointer;
+      border-radius: 10px;
+      border: 1px solid var(--su-border);
+      background: var(--su-muted);
+      padding: 8px 10px 10px;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    #setup-root .setup-bracket-opt:hover {
+      background: #fff;
+    }
+    #setup-root .setup-bracket-opt input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+    #setup-root .setup-bracket-opt:has(input:checked) {
+      border-color: color-mix(in srgb, #16a34a 45%, var(--su-border));
+      background: #fff;
+    }
+    #setup-root .setup-bracket-opt-svg {
+      height: 56px;
+      margin-bottom: 6px;
+      color: #71717a;
+    }
+    #setup-root .setup-bracket-opt-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--su-text);
+      margin: 0 0 2px;
+    }
+    #setup-root .setup-bracket-opt-desc {
+      font-size: 10px;
+      color: var(--su-text-secondary);
+      line-height: 1.35;
+      margin: 0;
+    }
+    #setup-root .setup-bracket-preview-diagram {
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #fff;
+      border: 1px solid var(--su-border);
+    }
+    #setup-root .setup-bracket-preview-diagram svg {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      color: #71717a;
+    }
+    #setup-root .setup-bracket-preview-cap {
+      font-size: 11px;
+      color: var(--su-text-secondary);
+      margin-top: 8px;
+      line-height: 1.45;
+    }
+    #setup-root .setup-roster-details summary {
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--su-text-secondary);
+      margin-bottom: 8px;
+    }
     #setup-root .setup-field {
       margin-bottom: 10px;
     }
@@ -1489,6 +1727,30 @@
       border-radius: 10px;
       overflow: hidden;
     }
+    .qext-track-block {
+      margin-bottom: 22px;
+    }
+    .qext-track-block:last-child {
+      margin-bottom: 0;
+    }
+    .qext-track-head {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #a1a1aa;
+      margin-bottom: 10px;
+    }
+    .qext-track-matches {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .qext-track-matches .qext-classic-match {
+      flex: 1 1 220px;
+      max-width: 380px;
+    }
     .qext-queue-teams-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -1961,6 +2223,25 @@
         <h1 class="setup-card-title">Event setup</h1>
       </div>
       <div class="setup-card-body">
+        <datalist id="setup-weight-presets">
+          <option value="Strawweight"></option>
+          <option value="Featherweight"></option>
+          <option value="Bantamweight"></option>
+          <option value="Lightweight"></option>
+          <option value="Welterweight"></option>
+          <option value="Middleweight"></option>
+          <option value="Light heavyweight"></option>
+          <option value="Heavyweight"></option>
+        </datalist>
+        <section class="setup-section setup-section-brackets">
+          <h2 class="setup-section-title">Brackets &amp; performers</h2>
+          <p class="setup-sublabel" style="margin:0 0 10px;font-size:11px;color:var(--muted-fg);line-height:1.45">
+            Add one <strong>category</strong> per bracket (weight, gender division, age). Add <strong>performers</strong> (name and team) under each category. The app builds a single-elimination tree per category through a championship final.
+          </p>
+          <div id="setup-categories-list" class="setup-categories-list"></div>
+          <button type="button" class="setup-btn-secondary" id="btn-setup-add-category">Add category</button>
+          <div id="setup-bracket-preview" class="setup-bracket-preview" hidden></div>
+        </section>
         <section class="setup-section">
           <h2 class="setup-section-title">Roster &amp; event</h2>
           <div class="setup-field">
@@ -1970,16 +2251,18 @@
               <div class="setup-pdf-status" id="setup-pdf-status">No file stored yet.</div>
             </div>
           </div>
-          <div class="setup-field">
-            <label for="setup-roster">Fighter roster (for bracket)</label>
-            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;align-items:center">
-              <button type="button" class="setup-btn-secondary" id="btn-import-roster-stored-pdf">Import roster from stored PDF</button>
-            </div>
-            <p class="setup-sublabel" style="margin:0 0 6px;font-size:11px;color:var(--muted-fg);line-height:1.4">
+          <details class="setup-roster-details setup-field">
+            <summary>Import / edit roster as text</summary>
+            <p class="setup-sublabel" style="margin:8px 0 6px;font-size:11px;color:var(--muted-fg);line-height:1.4">
               Optional columns (pipe or tab): <strong>Name | Team | Weight | Division | Age</strong>. Division: men’s / women’s / mixed. One bracket per unique class; event order: lightest→heaviest, youngest→oldest, women→men.
             </p>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;align-items:center">
+              <button type="button" class="setup-btn-secondary" id="btn-import-roster-stored-pdf">Import roster from stored PDF</button>
+              <button type="button" class="setup-btn-secondary" id="btn-setup-apply-roster-text">Apply text to bracket editor</button>
+            </div>
+            <label for="setup-roster">Performer roster (for bracket)</label>
             <textarea id="setup-roster" placeholder="Default: mock-data.js (5 weight classes). Name | Team | Weight | Division | Age"></textarea>
-          </div>
+          </details>
           <div class="setup-field">
             <label for="setup-competition-type">Competition type</label>
             <select id="setup-competition-type" style="width:100%">
@@ -1988,7 +2271,7 @@
             </select>
           </div>
           <p class="setup-sublabel" style="margin:0;font-size:11px;color:var(--muted-fg);line-height:1.45">
-            Weight, division, and age are taken <strong>only from each roster line</strong> (see columns above). One bracket is built per unique class—no event-wide category filter.
+            Use <strong>Brackets &amp; performers</strong> above for manual entry, or text/PDF import. Each category (weight · division · age) gets its own bracket—no event-wide filter.
           </p>
         </section>
         <section class="setup-section">
@@ -2016,16 +2299,118 @@
             <label for="setup-num-rounds">Rounds</label>
             <input type="number" id="setup-num-rounds" min="1" max="15" value="3" />
           </div>
-          <div class="setup-field">
-            <div class="setup-check-row">
-              <input type="checkbox" id="setup-single-elim" checked disabled />
-              <label for="setup-single-elim">Single elimination bracket</label>
+          <input type="hidden" id="setup-bracket-format" value="se-no-bronze" />
+          <div class="setup-field setup-bracket-format-wrap">
+            <label>Bracket format</label>
+            <p class="setup-sublabel" style="margin:0 0 8px;font-size:11px;color:var(--muted-fg);line-height:1.45">
+              Pick single or double elimination, then how bronze / third place works. <strong>Double elimination</strong> uses a full winners + losers path for <strong>exactly 4 performers</strong> per category (or 2 for one final). Other field sizes use single elimination.
+            </p>
+            <div class="setup-bracket-main-row" role="radiogroup" aria-label="Elimination type">
+              <label class="setup-bracket-main-card">
+                <input type="radio" name="setup-bracket-main" value="single" checked />
+                <svg class="setup-bracket-mini-svg" viewBox="0 0 120 72" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+                  <rect x="4" y="8" width="22" height="10" rx="2"/><rect x="4" y="28" width="22" height="10" rx="2"/><rect x="4" y="48" width="22" height="10" rx="2"/><rect x="4" y="68" width="22" height="10" rx="2"/>
+                  <path d="M26 13h14M26 33h14M26 53h14M26 73h14"/>
+                  <rect x="44" y="18" width="22" height="10" rx="2"/><rect x="44" y="58" width="22" height="10" rx="2"/>
+                  <path d="M66 23h14M66 63h14"/>
+                  <rect x="76" y="36" width="28" height="12" rx="2" fill="rgba(234,179,8,0.15)"/>
+                </svg>
+                <div class="setup-bracket-main-title">Single elimination</div>
+                <p class="setup-bracket-main-sub">If you lose — you’re out (with optional bronze bout or double-bronze).</p>
+              </label>
+              <label class="setup-bracket-main-card">
+                <input type="radio" name="setup-bracket-main" value="double" />
+                <svg class="setup-bracket-mini-svg" viewBox="0 0 120 72" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+                  <rect x="4" y="6" width="20" height="9" rx="2"/><rect x="4" y="22" width="20" height="9" rx="2"/><rect x="4" y="38" width="20" height="9" rx="2"/><rect x="4" y="54" width="20" height="9" rx="2"/>
+                  <path d="M24 10.5h12M24 26.5h12M24 42.5h12M24 58.5h12"/>
+                  <rect x="38" y="14" width="18" height="9" rx="2"/><rect x="38" y="46" width="18" height="9" rx="2"/>
+                  <path d="M56 18.5h10M56 50.5h10"/>
+                  <rect x="68" y="30" width="24" height="11" rx="2" fill="rgba(234,179,8,0.15)"/>
+                  <rect x="4" y="68" width="20" height="9" rx="2" opacity="0.85"/><rect x="28" y="68" width="20" height="9" rx="2" opacity="0.85"/>
+                  <path d="M24 72.5h8M48 72.5h8"/><rect x="40" y="62" width="18" height="9" rx="2"/>
+                </svg>
+                <div class="setup-bracket-main-title">Double elimination</div>
+                <p class="setup-bracket-main-sub">Losers drop to a second chance bracket (4 performers per category).</p>
+              </label>
             </div>
-          </div>
-          <div class="setup-field">
-            <div class="setup-check-row">
-              <input type="checkbox" id="setup-include-bronze" />
-              <label for="setup-include-bronze">Include bronze (3rd place) — losers of semis meet</label>
+            <div id="setup-bracket-sub-se" class="setup-bracket-sub-panel">
+              <div class="setup-bracket-sub-title">Single elimination</div>
+              <div class="setup-bracket-sub-grid" role="radiogroup" aria-label="Single elimination options">
+                <label class="setup-bracket-opt">
+                  <input type="radio" name="setup-bracket-sub-se" value="se-solo" />
+                  <svg class="setup-bracket-opt-svg" viewBox="0 0 100 56" fill="none" stroke="currentColor" stroke-width="1.1" aria-hidden="true">
+                    <rect x="36" y="20" width="28" height="14" rx="3" fill="rgba(234,179,8,0.2)"/>
+                  </svg>
+                  <div class="setup-bracket-opt-title">Solo entry</div>
+                  <p class="setup-bracket-opt-desc">One performer in a category: no bout — medal / ranking slot only.</p>
+                </label>
+                <label class="setup-bracket-opt">
+                  <input type="radio" name="setup-bracket-sub-se" value="se-bronze" />
+                  <svg class="setup-bracket-opt-svg" viewBox="0 0 100 56" fill="none" stroke="currentColor" stroke-width="1.1" aria-hidden="true">
+                    <rect x="4" y="8" width="16" height="8" rx="1.5"/><rect x="4" y="24" width="16" height="8" rx="1.5"/><rect x="4" y="40" width="16" height="8" rx="1.5"/><rect x="4" y="56" width="16" height="8" rx="1.5"/>
+                    <path d="M20 12h10M20 28h10M20 44h10M20 60h10"/>
+                    <rect x="32" y="14" width="16" height="8" rx="1.5"/><rect x="32" y="46" width="16" height="8" rx="1.5"/>
+                    <rect x="52" y="28" width="20" height="10" rx="2" fill="rgba(234,179,8,0.25)"/>
+                    <rect x="52" y="42" width="20" height="8" rx="2" fill="rgba(180,83,9,0.25)"/>
+                  </svg>
+                  <div class="setup-bracket-opt-title">Bronze match</div>
+                  <p class="setup-bracket-opt-desc">Semi-final losers fight for 3rd place.</p>
+                </label>
+                <label class="setup-bracket-opt">
+                  <input type="radio" name="setup-bracket-sub-se" value="se-no-bronze" checked />
+                  <svg class="setup-bracket-opt-svg" viewBox="0 0 100 56" fill="none" stroke="currentColor" stroke-width="1.1" aria-hidden="true">
+                    <rect x="4" y="8" width="16" height="8" rx="1.5"/><rect x="4" y="24" width="16" height="8" rx="1.5"/><rect x="4" y="40" width="16" height="8" rx="1.5"/><rect x="4" y="56" width="16" height="8" rx="1.5"/>
+                    <path d="M20 12h10M20 28h10M20 44h10M20 60h10"/>
+                    <rect x="32" y="14" width="16" height="8" rx="1.5" fill="rgba(180,83,9,0.2)"/><rect x="32" y="46" width="16" height="8" rx="1.5" fill="rgba(180,83,9,0.2)"/>
+                    <rect x="52" y="28" width="20" height="10" rx="2" fill="rgba(234,179,8,0.25)"/>
+                  </svg>
+                  <div class="setup-bracket-opt-title">Double bronze</div>
+                  <p class="setup-bracket-opt-desc">Semi losers both earn bronze — no extra fight.</p>
+                </label>
+              </div>
+            </div>
+            <div id="setup-bracket-sub-de" class="setup-bracket-sub-panel" hidden>
+              <div class="setup-bracket-sub-title">Double elimination</div>
+              <div class="setup-bracket-sub-grid" role="radiogroup" aria-label="Double elimination options">
+                <label class="setup-bracket-opt">
+                  <input type="radio" name="setup-bracket-sub-de" value="de-lb-final" checked />
+                  <svg class="setup-bracket-opt-svg" viewBox="0 0 100 56" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+                    <rect x="4" y="4" width="14" height="7" rx="1"/><rect x="4" y="16" width="14" height="7" rx="1"/><rect x="4" y="28" width="14" height="7" rx="1"/><rect x="4" y="40" width="14" height="7" rx="1"/>
+                    <path d="M18 7.5h8M18 19.5h8M18 31.5h8M18 43.5h8"/>
+                    <rect x="28" y="10" width="14" height="7" rx="1"/><rect x="28" y="34" width="14" height="7" rx="1"/>
+                    <rect x="46" y="20" width="16" height="9" rx="2" fill="rgba(234,179,8,0.2)"/>
+                    <rect x="4" y="52" width="14" height="7" rx="1"/><rect x="22" y="52" width="14" height="7" rx="1"/>
+                    <path d="M18 55.5h6M36 55.5h6"/><rect x="30" y="48" width="14" height="7" rx="1"/>
+                    <path d="M62 24h12"/><rect x="74" y="18" width="18" height="12" rx="2" fill="rgba(234,179,8,0.15)"/>
+                  </svg>
+                  <div class="setup-bracket-opt-title">Loser bracket to final</div>
+                  <p class="setup-bracket-opt-desc">Losers bracket winner meets winners bracket in the final.</p>
+                </label>
+                <label class="setup-bracket-opt">
+                  <input type="radio" name="setup-bracket-sub-de" value="de-bronze" />
+                  <svg class="setup-bracket-opt-svg" viewBox="0 0 100 62" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+                    <rect x="4" y="4" width="16" height="8" rx="1.5"/><rect x="4" y="18" width="16" height="8" rx="1.5"/><rect x="4" y="32" width="16" height="8" rx="1.5"/><rect x="4" y="46" width="16" height="8" rx="1.5"/>
+                    <path d="M20 8h8M20 22h8M20 36h8M20 50h8"/>
+                    <rect x="32" y="10" width="16" height="8" rx="1.5"/><rect x="32" y="42" width="16" height="8" rx="1.5"/>
+                    <rect x="52" y="24" width="20" height="10" rx="2" fill="rgba(234,179,8,0.25)"/>
+                    <rect x="52" y="38" width="20" height="8" rx="2" fill="rgba(180,83,9,0.25)"/>
+                  </svg>
+                  <div class="setup-bracket-opt-title">Bronze match</div>
+                  <p class="setup-bracket-opt-desc">Extra bout for 3rd between losers-bracket exits (when applicable).</p>
+                </label>
+                <label class="setup-bracket-opt">
+                  <input type="radio" name="setup-bracket-sub-de" value="de-double-bronze" />
+                  <svg class="setup-bracket-opt-svg" viewBox="0 0 100 56" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+                    <rect x="4" y="6" width="18" height="9" rx="1.5"/><rect x="4" y="22" width="18" height="9" rx="1.5"/><rect x="4" y="38" width="18" height="9" rx="1.5"/><rect x="4" y="54" width="18" height="9" rx="1.5"/>
+                    <path d="M22 10.5h10M22 26.5h10M22 42.5h10M22 58.5h10"/>
+                    <rect x="36" y="14" width="18" height="9" rx="1.5"/><rect x="36" y="46" width="18" height="9" rx="1.5"/>
+                    <rect x="58" y="28" width="22" height="11" rx="2" fill="rgba(234,179,8,0.25)"/>
+                    <rect x="58" y="44" width="10" height="8" rx="1.5" fill="rgba(180,83,9,0.25)"/><rect x="72" y="44" width="10" height="8" rx="1.5" fill="rgba(180,83,9,0.25)"/>
+                  </svg>
+                  <div class="setup-bracket-opt-title">Double bronze</div>
+                  <p class="setup-bracket-opt-desc">No bronze bout — two bronze placements without a fight.</p>
+                </label>
+              </div>
             </div>
           </div>
           <div class="setup-field">
@@ -2083,10 +2468,9 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
           Audience display
         </button>
-        <button type="button" class="header-toolbar-btn" id="btn-extension-fullscreen" style="display:none" title="Fullscreen the extension window (open display first)">Fullscreen display</button>
         <button type="button" class="header-toolbar-btn" id="btn-open-queue" title="Opens match queue and category results in a separate window">Players queue</button>
         <button type="button" class="header-toolbar-btn" id="btn-export-match-results" title="Print or save match results from this browser">Export results</button>
-        <button type="button" class="header-toolbar-btn" id="btn-queue-fullscreen" style="display:none" title="Fullscreen the queue window (open queue display first)">Fullscreen queue</button>
+        <button type="button" class="header-toolbar-btn" id="btn-end-event" style="border-color:rgba(239,68,68,.5);color:#fecaca" title="Clear this event and start fresh (you will confirm)">End event</button>
       </div>
       <span class="badge-header-ready" aria-hidden="true"><span class="ready-dot">●</span> Ready</span>
       <span id="rules-badge" class="badge header-rules-badge"></span>
@@ -2107,7 +2491,7 @@
         <!-- injected -->
       </div>
       <div class="card-body space-y-2 queue-card-actions" style="padding-top:12px;border-top:1px solid var(--border)">
-        <button type="button" class="btn-outline btn-sm w-full" id="btn-build-bracket">Build single-elim bracket from roster</button>
+        <button type="button" class="btn-outline btn-sm w-full" id="btn-build-bracket">Build bracket from roster</button>
       </div>
     </div>
 
@@ -2612,6 +2996,24 @@
   </div>
 </div>
 
+<!-- END EVENT — RESET BROWSER DATA (match control) -->
+<div class="overlay hidden" id="overlay-end-event" role="dialog" aria-modal="true" aria-labelledby="end-event-title">
+  <div class="dialog">
+    <div class="dialog-header">
+      <div class="dialog-title" id="end-event-title">End event</div>
+      <div class="dialog-desc">Start a new event or reset stored data on this device</div>
+    </div>
+    <div class="dialog-body">
+      <p class="text-sm" style="line-height:1.55;color:var(--fg)"><strong>Download or print your results first.</strong> Export uses the <strong>Export results</strong> button in the header. This page only keeps data in this browser — after clearing, previous match queues and scores cannot be recovered here.</p>
+      <p class="text-sm text-muted mt-3" style="line-height:1.5">This will remove the saved event setup, roster, match queue, and current match state so you can run a completely new event.</p>
+    </div>
+    <div class="dialog-footer">
+      <button type="button" class="btn-outline" id="btn-end-event-cancel">Cancel</button>
+      <button type="button" class="btn-destructive" id="btn-end-event-confirm">End event &amp; reset</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ═══════════════════════════════════════════════════════
 //  MODE: main control vs extension (?display=extension | ?display=queue)
@@ -2635,21 +3037,6 @@ function getQueueDisplayUrl() {
   return new URL('?display=queue', window.location.href).href;
 }
 
-function updateExtensionWindowUi() {
-  const fsBtn = $('btn-extension-fullscreen');
-  if (!fsBtn) return;
-  const open = extensionDisplayWindow && !extensionDisplayWindow.closed;
-  fsBtn.style.display = open ? '' : 'none';
-  if (open) {
-    try {
-      const fs = !!extensionDisplayWindow.document.fullscreenElement;
-      fsBtn.textContent = fs ? 'Exit fullscreen' : 'Fullscreen display';
-    } catch (_) {
-      fsBtn.textContent = 'Fullscreen display';
-    }
-  }
-}
-
 function openExtensionDisplay() {
   const url = getExtensionDisplayUrl();
   const sw = window.screen.availWidth;
@@ -2668,26 +3055,10 @@ function openExtensionDisplay() {
   ].join(',');
   const w = window.open(url, EXT_DISPLAY_WIN_NAME, features);
   extensionDisplayWindow = w;
-  updateExtensionWindowUi();
   if (w) {
     try { w.focus(); } catch (_) {}
   } else {
     showToast('Popup blocked', 'Allow pop-ups for this page to open the extension display window.');
-  }
-}
-
-function updateQueueWindowUi() {
-  const fsBtn = $('btn-queue-fullscreen');
-  if (!fsBtn) return;
-  const open = queueDisplayWindow && !queueDisplayWindow.closed;
-  fsBtn.style.display = open ? '' : 'none';
-  if (open) {
-    try {
-      const fs = !!queueDisplayWindow.document.fullscreenElement;
-      fsBtn.textContent = fs ? 'Exit queue fullscreen' : 'Fullscreen queue';
-    } catch (_) {
-      fsBtn.textContent = 'Fullscreen queue';
-    }
   }
 }
 
@@ -2709,55 +3080,10 @@ function openQueueDisplay() {
   ].join(',');
   const w = window.open(url, QUEUE_DISPLAY_WIN_NAME, features);
   queueDisplayWindow = w;
-  updateQueueWindowUi();
   if (w) {
     try { w.focus(); } catch (_) {}
   } else {
     showToast('Popup blocked', 'Allow pop-ups for this page to open the queue display window.');
-  }
-}
-
-function toggleQueueDisplayFullscreen() {
-  if (!queueDisplayWindow || queueDisplayWindow.closed) return;
-  const doc = queueDisplayWindow.document;
-  const root = doc.documentElement;
-  try {
-    if (doc.fullscreenElement) {
-      doc.exitFullscreen();
-    } else if (root.requestFullscreen) {
-      const p = root.requestFullscreen();
-      if (p && typeof p.catch === 'function') {
-        p.catch(() => {
-          queueDisplayWindow.postMessage({ type: 'extension-toggle-fullscreen' }, window.location.origin);
-        });
-      }
-    }
-  } catch (_) {
-    try {
-      queueDisplayWindow.postMessage({ type: 'extension-toggle-fullscreen' }, window.location.origin);
-    } catch (_) {}
-  }
-}
-
-function toggleExtensionDisplayFullscreen() {
-  if (!extensionDisplayWindow || extensionDisplayWindow.closed) return;
-  const doc = extensionDisplayWindow.document;
-  const root = doc.documentElement;
-  try {
-    if (doc.fullscreenElement) {
-      doc.exitFullscreen();
-    } else if (root.requestFullscreen) {
-      const p = root.requestFullscreen();
-      if (p && typeof p.catch === 'function') {
-        p.catch(() => {
-          extensionDisplayWindow.postMessage({ type: 'extension-toggle-fullscreen' }, window.location.origin);
-        });
-      }
-    }
-  } catch (_) {
-    try {
-      extensionDisplayWindow.postMessage({ type: 'extension-toggle-fullscreen' }, window.location.origin);
-    } catch (_) {}
   }
 }
 
@@ -2772,10 +3098,21 @@ const getMatchRules = () => {
     scoreLimitPerRound: null,
     competitionType: 'padded-stick',
     bracketStyle: 'single-elim',
+    bracketFormat: 'se-no-bronze',
     includeBronze: false,
     numRoundsChampionship: null,
   };
 };
+
+const BRACKET_FORMAT_SET = new Set([
+  'se-solo',
+  'se-bronze',
+  'se-no-bronze',
+  'de-lb-final',
+  'de-bronze',
+  'de-double-bronze',
+]);
+
 function normalizeMatchRules(r) {
   const raw = r && typeof r === 'object' ? r : {};
   let numRounds = parseInt(raw.numRounds, 10);
@@ -2803,9 +3140,18 @@ function normalizeMatchRules(r) {
   }
   let competitionType = typeof raw.competitionType === 'string' ? raw.competitionType.trim().toLowerCase() : '';
   if (competitionType !== 'live-stick' && competitionType !== 'padded-stick') competitionType = 'padded-stick';
-  let bracketStyle = typeof raw.bracketStyle === 'string' ? raw.bracketStyle.trim().toLowerCase() : '';
-  if (bracketStyle !== 'single-elim') bracketStyle = 'single-elim';
-  const includeBronze = !!(raw.includeBronze === true || raw.includeBronze === 1 || raw.includeBronze === '1');
+  let bracketFormat = typeof raw.bracketFormat === 'string' ? raw.bracketFormat.trim() : '';
+  if (!bracketFormat || !BRACKET_FORMAT_SET.has(bracketFormat)) {
+    const legacyBronze = !!(raw.includeBronze === true || raw.includeBronze === 1 || raw.includeBronze === '1');
+    const legacyStyle = typeof raw.bracketStyle === 'string' ? raw.bracketStyle.trim().toLowerCase() : '';
+    if (legacyStyle === 'double-elim') {
+      bracketFormat = legacyBronze ? 'de-bronze' : 'de-double-bronze';
+    } else {
+      bracketFormat = legacyBronze ? 'se-bronze' : 'se-no-bronze';
+    }
+  }
+  const bracketStyle = bracketFormat.startsWith('de-') ? 'double-elim' : 'single-elim';
+  const includeBronze = bracketFormat === 'se-bronze' || bracketFormat === 'de-bronze';
   let numRoundsChampionship = null;
   if (raw.numRoundsChampionship != null && raw.numRoundsChampionship !== '') {
     const nc = parseInt(raw.numRoundsChampionship, 10);
@@ -2823,9 +3169,78 @@ function normalizeMatchRules(r) {
     scoreLimitPerRound,
     competitionType,
     bracketStyle,
+    bracketFormat,
     includeBronze,
     numRoundsChampionship,
   };
+}
+
+function bracketFormatShortLabel(fmt) {
+  switch (fmt) {
+    case 'se-solo':
+      return 'SE · solo';
+    case 'se-bronze':
+      return 'SE · bronze bout';
+    case 'se-no-bronze':
+      return 'SE · double bronze';
+    case 'de-lb-final':
+      return 'DE · final';
+    case 'de-bronze':
+      return 'DE · bronze bout';
+    case 'de-double-bronze':
+      return 'DE · double bronze';
+    default:
+      return 'SE';
+  }
+}
+
+function readSetupBracketFormatFromDom() {
+  syncBracketFormatHiddenInput();
+  const v = ($('setup-bracket-format')?.value || '').trim();
+  return BRACKET_FORMAT_SET.has(v) ? v : 'se-no-bronze';
+}
+
+function syncBracketFormatHiddenInput() {
+  const main = document.querySelector('input[name="setup-bracket-main"]:checked')?.value || 'single';
+  const hid = $('setup-bracket-format');
+  if (!hid) return;
+  if (main === 'double') {
+    const sub = document.querySelector('input[name="setup-bracket-sub-de"]:checked')?.value || 'de-lb-final';
+    hid.value = BRACKET_FORMAT_SET.has(sub) ? sub : 'de-lb-final';
+  } else {
+    const sub = document.querySelector('input[name="setup-bracket-sub-se"]:checked')?.value || 'se-no-bronze';
+    hid.value = BRACKET_FORMAT_SET.has(sub) ? sub : 'se-no-bronze';
+  }
+}
+
+function updateBracketSubPanelsVisibility() {
+  const main = document.querySelector('input[name="setup-bracket-main"]:checked')?.value || 'single';
+  const se = $('setup-bracket-sub-se');
+  const de = $('setup-bracket-sub-de');
+  if (se) se.hidden = main !== 'single';
+  if (de) de.hidden = main !== 'double';
+}
+
+function applyBracketFormatToUi(fmt) {
+  const f = BRACKET_FORMAT_SET.has(fmt) ? fmt : 'se-no-bronze';
+  let main = 'single';
+  let subSe = 'se-no-bronze';
+  let subDe = 'de-lb-final';
+  if (f.startsWith('de-')) {
+    main = 'double';
+    subDe = f;
+  } else {
+    main = 'single';
+    subSe = f;
+  }
+  const rm = document.querySelector(`input[name="setup-bracket-main"][value="${main}"]`);
+  if (rm) rm.checked = true;
+  const rse = document.querySelector(`input[name="setup-bracket-sub-se"][value="${subSe}"]`);
+  if (rse) rse.checked = true;
+  const rde = document.querySelector(`input[name="setup-bracket-sub-de"][value="${subDe}"]`);
+  if (rde) rde.checked = true;
+  updateBracketSubPanelsVisibility();
+  syncBracketFormatHiddenInput();
 }
 
 function divisionLabel(code) {
@@ -2981,13 +3396,14 @@ function showSetupScreen() {
       rosterTa.value = getDefaultMatchRosterText();
     }
   }
-  const br = $('setup-include-bronze');
-  if (br) br.checked = !!matchRules.includeBronze;
+  applyBracketFormatToUi(matchRules.bracketFormat || 'se-no-bronze');
   const ncf = $('setup-num-rounds-final');
   if (ncf) {
     const nc = matchRules.numRoundsChampionship;
     ncf.value = nc != null && Number.isFinite(nc) ? String(nc) : '';
   }
+  syncStructuredFromTextarea();
+  updateBracketPreviewSetup();
 }
 
 function hideSetupScreen() {
@@ -3034,7 +3450,8 @@ async function completeEventSetup() {
   }
   const compTypeRaw = ($('setup-competition-type')?.value || '').trim().toLowerCase();
   const competitionType = compTypeRaw === 'live-stick' ? 'live-stick' : 'padded-stick';
-  const includeBronze = !!$('setup-include-bronze')?.checked;
+  syncBracketFormatHiddenInput();
+  const bracketFormat = readSetupBracketFormatFromDom();
   const ncRaw = ($('setup-num-rounds-final')?.value || '').trim();
   let numRoundsChampionship = null;
   if (ncRaw !== '') {
@@ -3046,8 +3463,7 @@ async function completeEventSetup() {
     advantageEnabled: advantageOn, disarmsToWin: disarms, violationsToLose: violCap,
     scoreLimitPerRound,
     competitionType,
-    bracketStyle: 'single-elim',
-    includeBronze,
+    bracketFormat,
     numRoundsChampionship,
   });
   let rosterImportedFromPdf = 0;
@@ -3090,12 +3506,33 @@ async function completeEventSetup() {
   if (rosterTa && !(rosterTa.value || '').trim() && !hasPlayersPdfMc && getDefaultMatchRosterText()) {
     rosterTa.value = getDefaultMatchRosterText();
   }
+  syncSetupCategoriesFromDom();
+  let rosterRows = flattenSetupCategoriesToRosterRows();
+  if (!rosterRows.length) {
+    rosterRows = parseRosterFromSetupText($('setup-roster')?.value ?? '');
+  }
+  if (!rosterRows.length) {
+    if (err) {
+      err.textContent =
+        'Add at least one performer in Brackets & performers, or paste roster text under Import / edit roster as text.';
+      err.classList.add('show');
+    }
+    return;
+  }
   try {
-    const rosterRows = parseRosterFromSetupText($('setup-roster')?.value ?? '');
     localStorage.setItem(EVENT_ROSTER_KEY, JSON.stringify(rosterRows));
   } catch {
     if (err) { err.textContent = 'Could not save roster (storage may be full or disabled).'; err.classList.add('show'); }
     return;
+  }
+  if (rosterTa) rosterTa.value = rosterRowsToTextarea(rosterRows);
+  reloadMatchRulesFromStorage();
+  const poolsSkipped = splitRosterIntoPools(rosterRows, matchRules).filter((p) => p.rows.length < 2);
+  if (poolsSkipped.length) {
+    showToast(
+      'Bracket note',
+      'Some categories have fewer than 2 performers and will be skipped until you add more.'
+    );
   }
   state.timeLeft = initTime();
   state.blueViol = Math.min(state.blueViol, maxViolations());
@@ -3135,6 +3572,20 @@ async function openStoredPlayersPdf() {
 }
 
 const EVENT_ROSTER_KEY = 'eventRoster';
+
+/** Clears match-control local data and reloads so the user can start a new event. */
+function resetMatchControlEvent() {
+  try {
+    localStorage.removeItem('matchControlSetupComplete');
+    localStorage.removeItem('eventMatchRules');
+    localStorage.removeItem(EVENT_ROSTER_KEY);
+    localStorage.removeItem('matchQueue');
+    localStorage.removeItem('matchState');
+    localStorage.removeItem('playersPdfMeta');
+    localStorage.removeItem('currentCourt');
+  } catch (_) { /* ignore */ }
+  location.reload();
+}
 
 /** `mock-data.js` — multi-category demo roster when nothing is stored yet. */
 function getDefaultMatchRosterText() {
@@ -3374,6 +3825,379 @@ function dedupeRosterRows(arr) {
   return out;
 }
 
+// ——— Structured bracket setup (categories + performers) ———
+let setupCategoriesDraft = [];
+
+function newSetupCategoryId() {
+  return (
+    'sc-' +
+    (typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID().slice(0, 12)
+      : String(Date.now()) + '-' + Math.random().toString(36).slice(2, 9))
+  );
+}
+
+function newPlayerId() {
+  return (
+    'sp-' +
+    (typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID().slice(0, 12)
+      : String(Date.now()) + '-' + Math.random().toString(36).slice(2, 9))
+  );
+}
+
+function createEmptySetupCategory() {
+  return {
+    id: newSetupCategoryId(),
+    weightClass: '',
+    division: 'mens',
+    ageRange: '',
+    players: [],
+  };
+}
+
+function hydrateSetupCategoriesFromRows(rows) {
+  reloadMatchRulesFromStorage();
+  if (!rows || !rows.length) {
+    setupCategoriesDraft = [createEmptySetupCategory()];
+    return;
+  }
+  const pools = splitRosterIntoPools(rows, matchRules);
+  if (!pools.length) {
+    setupCategoriesDraft = [createEmptySetupCategory()];
+    return;
+  }
+  setupCategoriesDraft = pools.map((pool) => {
+    const r0 = normalizeRosterRow(pool.rows[0] || {}, {});
+    return {
+      id: newSetupCategoryId(),
+      weightClass: r0.weightClass || '',
+      division: r0.division || 'mens',
+      ageRange: r0.ageRange || '',
+      players: pool.rows.map((r) => ({
+        pid: newPlayerId(),
+        name: r.name || '',
+        team: r.team || '',
+      })),
+    };
+  });
+}
+
+function syncStructuredFromTextarea() {
+  const ta = $('setup-roster');
+  const rows = parseRosterFromSetupText(ta?.value || '');
+  hydrateSetupCategoriesFromRows(rows);
+  renderSetupCategories();
+  updateBracketPreviewSetup();
+}
+
+function syncSetupCategoriesFromDom() {
+  const container = $('setup-categories-list');
+  if (!container) return;
+  const cards = container.querySelectorAll('.setup-category-card');
+  const next = [];
+  cards.forEach((card) => {
+    const id = card.getAttribute('data-cat-id') || newSetupCategoryId();
+    const weightClass = card.querySelector('.setup-cat-weight')?.value?.trim() || '';
+    const division = card.querySelector('.setup-cat-division')?.value || 'mens';
+    const ageRange = card.querySelector('.setup-cat-age')?.value?.trim() || '';
+    const players = [];
+    card.querySelectorAll('.setup-player-row').forEach((row) => {
+      const pid = row.getAttribute('data-player-id') || newPlayerId();
+      const name = row.querySelector('.setup-player-name')?.value?.trim() || '';
+      const team = row.querySelector('.setup-player-team')?.value?.trim() || '';
+      players.push({ pid, name, team });
+    });
+    next.push({ id, weightClass, division, ageRange, players });
+  });
+  if (next.length) setupCategoriesDraft = next;
+}
+
+function flattenSetupCategoriesToRosterRows() {
+  const rows = [];
+  for (const cat of setupCategoriesDraft) {
+    const w = (cat.weightClass || '').trim();
+    const d = normalizeDivisionToken(cat.division) || String(cat.division || '').trim() || 'mens';
+    const a = (cat.ageRange || '').trim();
+    for (const pl of cat.players || []) {
+      const name = (pl.name || '').trim();
+      if (!name) continue;
+      rows.push({
+        name,
+        team: (pl.team || '').trim(),
+        weightClass: w || undefined,
+        division: d || undefined,
+        ageRange: a || undefined,
+      });
+    }
+  }
+  return dedupeRosterRows(rows);
+}
+
+function syncRosterTextareaFromStructured() {
+  const rows = flattenSetupCategoriesToRosterRows();
+  const ta = $('setup-roster');
+  if (ta) ta.value = rosterRowsToTextarea(rows);
+}
+
+function removeSetupCategory(catId) {
+  syncSetupCategoriesFromDom();
+  setupCategoriesDraft = setupCategoriesDraft.filter((c) => c.id !== catId);
+  if (!setupCategoriesDraft.length) setupCategoriesDraft = [createEmptySetupCategory()];
+  renderSetupCategories();
+  syncRosterTextareaFromStructured();
+  updateBracketPreviewSetup();
+}
+
+function addSetupPlayer(catId) {
+  syncSetupCategoriesFromDom();
+  const cat = setupCategoriesDraft.find((c) => c.id === catId);
+  if (!cat) return;
+  if (!cat.players) cat.players = [];
+  cat.players.push({ pid: newPlayerId(), name: '', team: '' });
+  renderSetupCategories();
+  syncRosterTextareaFromStructured();
+  updateBracketPreviewSetup();
+}
+
+function removeSetupPlayer(catId, playerId) {
+  syncSetupCategoriesFromDom();
+  const cat = setupCategoriesDraft.find((c) => c.id === catId);
+  if (!cat || !cat.players) return;
+  cat.players = cat.players.filter((p) => p.pid !== playerId);
+  renderSetupCategories();
+  syncRosterTextareaFromStructured();
+  updateBracketPreviewSetup();
+}
+
+function escSetupAttr(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function renderOneSetupCategoryCard(cat) {
+  const dNorm = normalizeDivisionToken(cat.division) || 'mens';
+  const selM = dNorm === 'mens' ? ' selected' : '';
+  const selW = dNorm === 'womens' ? ' selected' : '';
+  const selX = dNorm === 'mixed' ? ' selected' : '';
+  const players = cat.players || [];
+  const playersHtml = players
+    .map(
+      (pl) =>
+        `<div class="setup-player-row" data-player-id="${escSetupAttr(pl.pid)}">
+      <div class="setup-field" style="margin-bottom:0">
+        <label class="setup-sublabel">Name</label>
+        <input type="text" class="setup-input setup-player-name" value="${escSetupAttr(pl.name)}" autocomplete="off" />
+      </div>
+      <div class="setup-field" style="margin-bottom:0">
+        <label class="setup-sublabel">Team</label>
+        <input type="text" class="setup-input setup-player-team" value="${escSetupAttr(pl.team)}" autocomplete="off" />
+      </div>
+      <button type="button" class="setup-player-remove" title="Remove performer">✕</button>
+    </div>`
+    )
+    .join('');
+  return `<div class="setup-category-card" data-cat-id="${escSetupAttr(cat.id)}">
+    <div class="setup-category-card-head">
+      <div class="setup-field" style="margin-bottom:0">
+        <label class="setup-sublabel">Weight class</label>
+        <input type="text" class="setup-input setup-cat-weight" list="setup-weight-presets" value="${escSetupAttr(cat.weightClass)}" placeholder="e.g. Featherweight" />
+      </div>
+      <div class="setup-field" style="margin-bottom:0">
+        <label class="setup-sublabel">Division</label>
+        <select class="setup-input setup-cat-division" aria-label="Gender division">
+          <option value="mens"${selM}>Men's</option>
+          <option value="womens"${selW}>Women's</option>
+          <option value="mixed"${selX}>Mixed</option>
+        </select>
+      </div>
+      <div class="setup-field" style="margin-bottom:0">
+        <label class="setup-sublabel">Age range</label>
+        <input type="text" class="setup-input setup-cat-age" value="${escSetupAttr(cat.ageRange)}" placeholder="e.g. 12-15" />
+      </div>
+      <button type="button" class="setup-category-remove">Remove category</button>
+    </div>
+    <div class="setup-players-head">Performers</div>
+    ${playersHtml || '<p class="setup-sublabel" style="margin:0 0 8px">No performers yet — use Add performer.</p>'}
+    <button type="button" class="setup-btn-secondary setup-add-fighter">Add performer</button>
+  </div>`;
+}
+
+function renderSetupCategories() {
+  const list = $('setup-categories-list');
+  if (!list) return;
+  if (!setupCategoriesDraft.length) setupCategoriesDraft = [createEmptySetupCategory()];
+  list.innerHTML = setupCategoriesDraft.map((c) => renderOneSetupCategoryCard(c)).join('');
+}
+
+function countPoolMatchesPlanned(n, bracketFormat) {
+  const fmt = bracketFormat || 'se-no-bronze';
+  if (n < 1) return 0;
+  if (fmt === 'se-solo' && n === 1) return 0;
+  if (n < 2) return 0;
+  if (fmt.startsWith('de-')) {
+    if (n === 2) return 1;
+    if (n === 4) {
+      let m = 6;
+      if (fmt === 'de-bronze') m += 1;
+      return m;
+    }
+    return 0;
+  }
+  let m = n - 1;
+  if (fmt === 'se-bronze' && n >= 4) m += 1;
+  return m;
+}
+
+function renderSetupBracketFormatPreviewSvg(fmt) {
+  const esc = (s) =>
+    String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  const cap = {
+    'se-solo': 'No elimination bouts — one slot per solo category for results / ranking.',
+    'se-bronze': 'Single elimination tree, then a bronze bout between semi-final losers.',
+    'se-no-bronze': 'Single elimination; semi-final losers share bronze (no extra bout).',
+    'de-lb-final': 'Four performers: winners bracket + losers bracket, then grand final.',
+    'de-bronze': 'Double elimination for four performers, plus a bronze bout before the final.',
+    'de-double-bronze': 'Double elimination for four performers; two bronze placements without a bronze bout.',
+  }[fmt] || '';
+  let svg = '';
+  if (fmt === 'se-solo') {
+    svg =
+      '<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#71717a" stroke-width="1.2"><rect x="100" y="36" width="80" height="28" rx="4" fill="rgba(234,179,8,0.15)"/></svg>';
+  } else if (fmt === 'se-bronze' || fmt === 'se-no-bronze') {
+    const semiFill = fmt === 'se-no-bronze' ? 'fill="rgba(180,83,9,0.2)"' : '';
+    svg = `<svg viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#71717a" stroke-width="1.2">
+      <rect x="8" y="12" width="44" height="16" rx="3"/><rect x="8" y="44" width="44" height="16" rx="3"/><rect x="8" y="76" width="44" height="16" rx="3"/><rect x="8" y="108" width="44" height="16" rx="3"/>
+      <path d="M52 20h28M52 52h28M52 84h28M52 116h28"/>
+      <rect x="88" y="24" width="44" height="16" rx="3" ${semiFill}/><rect x="88" y="88" width="44" height="16" rx="3" ${semiFill}/>
+      <path d="M132 32h28M132 96h28"/>
+      <rect x="168" y="52" width="56" height="20" rx="3" fill="rgba(234,179,8,0.25)"/>
+      ${fmt === 'se-bronze' ? '<rect x="168" y="88" width="56" height="16" rx="3" fill="rgba(180,83,9,0.25)"/>' : ''}
+    </svg>`;
+  } else {
+    svg = `<svg viewBox="0 0 340 140" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#71717a" stroke-width="1.1">
+      <text x="4" y="12" fill="#a1a1aa" font-size="9" font-weight="700">Winners</text>
+      <rect x="8" y="20" width="36" height="12" rx="2"/><rect x="8" y="40" width="36" height="12" rx="2"/><rect x="8" y="60" width="36" height="12" rx="2"/><rect x="8" y="80" width="36" height="12" rx="2"/>
+      <path d="M44 26h16M44 46h16M44 66h16M44 86h16"/>
+      <rect x="64" y="30" width="36" height="12" rx="2"/><rect x="64" y="70" width="36" height="12" rx="2"/>
+      <path d="M100 36h16M100 76h16"/>
+      <rect x="120" y="48" width="44" height="16" rx="3" fill="rgba(234,179,8,0.2)"/>
+      <text x="4" y="108" fill="#a1a1aa" font-size="9" font-weight="700">Losers</text>
+      <rect x="8" y="114" width="36" height="12" rx="2"/><rect x="52" y="114" width="36" height="12" rx="2"/><path d="M44 120h12"/>
+      <rect x="100" y="114" width="40" height="12" rx="2"/>
+      <path d="M88 120h12"/>
+      ${fmt === 'de-bronze' ? '<rect x="200" y="52" width="48" height="14" rx="3" fill="rgba(180,83,9,0.2)"/>' : ''}
+      <rect x="248" y="46" width="52" height="18" rx="3" fill="rgba(234,179,8,0.18)"/>
+      <text x="252" y="58" fill="#71717a" font-size="8">Final</text>
+    </svg>`;
+  }
+  return (
+    '<div class="setup-bracket-preview-diagram">' +
+    svg +
+    '<p class="setup-bracket-preview-cap">' +
+    esc(cap) +
+    '</p></div>'
+  );
+}
+
+function updateBracketPreviewSetup() {
+  const el = $('setup-bracket-preview');
+  if (!el) return;
+  syncSetupCategoriesFromDom();
+  const rows = flattenSetupCategoriesToRosterRows();
+  reloadMatchRulesFromStorage();
+  syncBracketFormatHiddenInput();
+  const fmt = readSetupBracketFormatFromDom();
+  const pools = splitRosterIntoPools(rows.length ? rows : [], matchRules);
+  if (!rows.length && !pools.length) {
+    el.innerHTML =
+      '<p class="setup-sublabel" style="margin:0">Add categories and performers to see planned bouts per bracket.</p>' +
+      renderSetupBracketFormatPreviewSvg(fmt);
+    el.hidden = false;
+    return;
+  }
+  const esc = (s) =>
+    String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  let html =
+    '<div class="setup-preview-inner"><strong>Bracket preview</strong> <span class="setup-sublabel">(planned bouts)</span>';
+  html += renderSetupBracketFormatPreviewSvg(fmt);
+  html += '<ul class="setup-preview-list">';
+  for (const pool of pools) {
+    const n = pool.rows.filter((r) => (r.name || '').trim()).length;
+    const m = countPoolMatchesPlanned(n, fmt);
+    const label = pool.label || pool.key;
+    html += '<li><span class="setup-preview-cat">' + esc(label) + '</span> — ' + n + ' performer(s)';
+    if (fmt !== 'se-solo' && n < 2) html += ' · <em>needs ≥2 for fights</em>';
+    else if (fmt === 'se-solo' && n === 1) html += ' · solo slot (no bout)';
+    else if (fmt.startsWith('de-') && n !== 2 && n !== 4) html += ' · <em>double elim needs 4 (or 2) performers</em>';
+    else if (m === 0 && n >= 2) html += ' · <em>check format vs field size</em>';
+    else html += ' · ~' + m + ' bout(s)';
+    html += '</li>';
+  }
+  html += '</ul></div>';
+  el.innerHTML = html;
+  el.hidden = false;
+}
+
+function initMatchSetupBracketUi() {
+  $('btn-setup-add-category')?.addEventListener('click', () => {
+    syncSetupCategoriesFromDom();
+    setupCategoriesDraft.push(createEmptySetupCategory());
+    renderSetupCategories();
+    syncRosterTextareaFromStructured();
+    updateBracketPreviewSetup();
+  });
+  $('btn-setup-apply-roster-text')?.addEventListener('click', () => {
+    syncStructuredFromTextarea();
+    showToast('Applied', 'Bracket editor updated from text.');
+  });
+  const list = $('setup-categories-list');
+  if (list) {
+    list.addEventListener('click', (e) => {
+      const rmCat = e.target.closest('.setup-category-remove');
+      if (rmCat) {
+        const card = rmCat.closest('.setup-category-card');
+        const id = card && card.getAttribute('data-cat-id');
+        if (id) removeSetupCategory(id);
+        return;
+      }
+      const addF = e.target.closest('.setup-add-fighter');
+      if (addF) {
+        const card = addF.closest('.setup-category-card');
+        const id = card && card.getAttribute('data-cat-id');
+        if (id) addSetupPlayer(id);
+        return;
+      }
+      const rmPl = e.target.closest('.setup-player-remove');
+      if (rmPl) {
+        const card = rmPl.closest('.setup-category-card');
+        const prow = rmPl.closest('.setup-player-row');
+        const cid = card && card.getAttribute('data-cat-id');
+        const pid = prow && prow.getAttribute('data-player-id');
+        if (cid && pid) removeSetupPlayer(cid, pid);
+      }
+    });
+    list.addEventListener('input', () => updateBracketPreviewSetup());
+    list.addEventListener('change', () => updateBracketPreviewSetup());
+  }
+  document.querySelectorAll('input[name="setup-bracket-main"], input[name="setup-bracket-sub-se"], input[name="setup-bracket-sub-de"]').forEach((inp) => {
+    inp.addEventListener('change', () => {
+      syncBracketFormatHiddenInput();
+      updateBracketSubPanelsVisibility();
+      updateBracketPreviewSetup();
+    });
+  });
+}
+
 function parseRosterFromPdfRawLines(lines) {
   const out = [];
   const skipLine = /^(page\s+\d+\s*of\s*\d+|page\s+\d+|#+)$/i;
@@ -3506,6 +4330,9 @@ async function tryFillRosterFromPdfBuffer(buf) {
   if (rows.length < 1) return 0;
   const ta = $('setup-roster');
   if (ta) ta.value = rosterRowsToTextarea(rows);
+  try {
+    syncStructuredFromTextarea();
+  } catch (_) {}
   return rows.length;
 }
 
@@ -3541,7 +4368,10 @@ async function onSetupPdfFileSelectedChange(ev) {
     }
     const ta = $('setup-roster');
     if (ta) ta.value = rosterRowsToTextarea(rows);
-    showToast('Roster from PDF', `${rows.length} fighter(s) — review below, then Continue.`);
+    try {
+      syncStructuredFromTextarea();
+    } catch (_) {}
+    showToast('Roster from PDF', `${rows.length} performer(s) — review below, then Continue.`);
   } catch (e) {
     console.warn(e);
     if (errEl) {
@@ -3574,7 +4404,10 @@ async function importRosterFromStoredPdfClick() {
     }
     const ta = $('setup-roster');
     if (ta) ta.value = rosterRowsToTextarea(rows);
-    showToast('Roster from stored PDF', `${rows.length} fighter(s).`);
+    try {
+      syncStructuredFromTextarea();
+    } catch (_) {}
+    showToast('Roster from stored PDF', `${rows.length} performer(s).`);
   } catch (e) {
     console.warn(e);
     if (errEl) {
@@ -3736,6 +4569,8 @@ function createBracketMatch(round, idxInRound, redS, blueS, category, categoryKe
 }
 
 function matchReadyToStart(m) {
+  if ((m.status || 'upcoming') !== 'upcoming') return false;
+  if (m.matchKind === 'solo') return false;
   const rn = (m.redCorner?.name || '').trim();
   const bn = (m.blueCorner?.name || '').trim();
   if (!rn || !bn) return false;
@@ -3766,6 +4601,207 @@ function assignScheduleOrder(matches, includeBronze) {
   sorted.forEach((m, i) => {
     m.order = i + 1;
   });
+}
+
+/** One-fighter category: no bout; keeps a completed row for results / export. */
+function buildSoloMedalMatch(rosterEntries, opts) {
+  const categoryDisplay =
+    (opts && opts.categoryDisplay != null && String(opts.categoryDisplay).trim() !== '')
+      ? String(opts.categoryDisplay).trim()
+      : (formatCategoryLabel(rosterEntries[0] || {}, {}) || 'General');
+  const categoryKey = (opts && opts.categoryKey) || '';
+  const poolPrefix = (opts && opts.poolPrefix) || '';
+  const row = rosterEntries.map((r) => ({
+    name: (r.name || '').trim(),
+    team: (r.team || '').trim() || '—',
+  })).find((r) => r.name);
+  if (!row) return null;
+  const id = `${poolPrefix}SOLO-M1`;
+  return [
+    {
+      id,
+      bout: 'Solo entry',
+      round: 1,
+      idxInRound: 1,
+      bracketPhase: 'Solo entry',
+      order: 1,
+      status: 'completed',
+      winner: 'red',
+      category: categoryDisplay,
+      categoryKey,
+      matchKind: 'solo',
+      bracketTrack: 'SOLO',
+      redCorner: { name: row.name, team: row.team },
+      blueCorner: { name: '—', team: '' },
+      redFrom: null,
+      blueFrom: null,
+      redLoserFrom: null,
+      blueLoserFrom: null,
+    },
+  ];
+}
+
+/** 4 fighters (or 2 for straight final): winners + losers bracket + grand final; optional bronze bout. */
+function buildDoubleEliminationQueueForPool(rosterEntries, opts) {
+  const categoryDisplay =
+    (opts && opts.categoryDisplay != null && String(opts.categoryDisplay).trim() !== '')
+      ? String(opts.categoryDisplay).trim()
+      : (formatCategoryLabel(rosterEntries[0] || {}, {}) || 'General');
+  const categoryKey = (opts && opts.categoryKey) || '';
+  const poolPrefix = (opts && opts.poolPrefix) || '';
+  const bracketFormat = (opts && opts.bracketFormat) || 'de-lb-final';
+  const raw = rosterEntries
+    .map((r) => ({
+      type: 'f',
+      name: (r.name || '').trim(),
+      team: (r.team || '').trim() || '—',
+    }))
+    .filter((r) => r.name);
+  if (raw.length === 2) {
+    const m = buildSingleEliminationQueueForPool(
+      rosterEntries,
+      {
+        categoryDisplay,
+        categoryKey,
+        includeBronze: false,
+        poolPrefix,
+      }
+    );
+    if (!m) return null;
+    m.forEach((x) => {
+      x.bracketTrack = x.bracketTrack || 'WB';
+      if (!x.bracketPhase) x.bracketPhase = 'Grand final';
+    });
+    return m;
+  }
+  if (raw.length !== 4) return null;
+  shuffleInPlaceBracket(raw);
+  const f = (i) => ({ type: 'f', name: raw[i].name, team: raw[i].team });
+
+  const W11 = createBracketMatch(1, 1, f(0), f(1), categoryDisplay, categoryKey, poolPrefix);
+  W11.id = `${poolPrefix}DE-WB-R1-M1`;
+  W11.bout = 'WB · R1 · M1';
+  W11.bracketTrack = 'WB';
+
+  const W12 = createBracketMatch(1, 2, f(2), f(3), categoryDisplay, categoryKey, poolPrefix);
+  W12.id = `${poolPrefix}DE-WB-R1-M2`;
+  W12.bout = 'WB · R1 · M2';
+  W12.bracketTrack = 'WB';
+
+  const W21 = createBracketMatch(
+    2,
+    1,
+    { type: 'w', matchId: W11.id },
+    { type: 'w', matchId: W12.id },
+    categoryDisplay,
+    categoryKey,
+    poolPrefix
+  );
+  W21.id = `${poolPrefix}DE-WB-R2-M1`;
+  W21.bout = 'WB · final';
+  W21.bracketTrack = 'WB';
+
+  const LB1 = {
+    id: `${poolPrefix}DE-LB-R1-M1`,
+    bout: 'LB · R1',
+    round: 1,
+    idxInRound: 1,
+    bracketPhase: 'Losers',
+    order: 0,
+    status: 'upcoming',
+    category: categoryDisplay,
+    categoryKey,
+    matchKind: 'elimination',
+    bracketTrack: 'LB',
+    redCorner: { name: 'TBD', team: '' },
+    blueCorner: { name: 'TBD', team: '' },
+    redFrom: null,
+    blueFrom: null,
+    redLoserFrom: W11.id,
+    blueLoserFrom: W12.id,
+  };
+
+  const LB2 = {
+    id: `${poolPrefix}DE-LB-R2-M1`,
+    bout: 'LB · final',
+    round: 2,
+    idxInRound: 1,
+    bracketPhase: 'Losers',
+    order: 0,
+    status: 'upcoming',
+    category: categoryDisplay,
+    categoryKey,
+    matchKind: 'elimination',
+    bracketTrack: 'LB',
+    redCorner: { name: 'TBD', team: '' },
+    blueCorner: { name: 'TBD', team: '' },
+    redFrom: LB1.id,
+    blueFrom: null,
+    redLoserFrom: null,
+    blueLoserFrom: W21.id,
+  };
+
+  const GF = {
+    id: `${poolPrefix}DE-GF-M1`,
+    bout: 'Grand final',
+    round: 3,
+    idxInRound: 1,
+    bracketPhase: 'Grand final',
+    order: 0,
+    status: 'upcoming',
+    category: categoryDisplay,
+    categoryKey,
+    matchKind: 'elimination',
+    bracketTrack: 'GF',
+    redCorner: { name: 'TBD', team: '' },
+    blueCorner: { name: 'TBD', team: '' },
+    redFrom: W21.id,
+    blueFrom: LB2.id,
+    redLoserFrom: null,
+    blueLoserFrom: null,
+  };
+
+  const matches = [W11, W12, LB1, W21, LB2];
+  let BZ = null;
+  if (bracketFormat === 'de-bronze') {
+    BZ = {
+      id: `${poolPrefix}DE-BZ-M1`,
+      bout: 'Bronze · 3rd place',
+      round: 2,
+      idxInRound: 98,
+      bracketPhase: 'Bronze',
+      order: 0,
+      status: 'upcoming',
+      category: categoryDisplay,
+      categoryKey,
+      matchKind: 'bronze',
+      bracketTrack: 'BZ',
+      redCorner: { name: 'TBD', team: '' },
+      blueCorner: { name: 'TBD', team: '' },
+      redFrom: null,
+      blueFrom: null,
+      redLoserFrom: LB1.id,
+      blueLoserFrom: LB2.id,
+    };
+    matches.push(BZ);
+  }
+  matches.push(GF);
+
+  const orderIds =
+    bracketFormat === 'de-bronze' && BZ
+      ? [W11.id, W12.id, LB1.id, W21.id, LB2.id, BZ.id, GF.id]
+      : [W11.id, W12.id, LB1.id, W21.id, LB2.id, GF.id];
+  const byId = new Map(matches.map((m) => [m.id, m]));
+  let ord = 1;
+  orderIds.forEach((id) => {
+    const m = byId.get(id);
+    if (m) m.order = ord++;
+  });
+
+  matches.forEach((m) => {
+    m.status = 'upcoming';
+  });
+  return matches;
 }
 
 function buildSingleEliminationQueueForPool(rosterEntries, opts) {
@@ -3852,22 +4888,48 @@ function buildSingleEliminationQueueForPool(rosterEntries, opts) {
   return matches;
 }
 
+function buildPoolBracketChunk(poolRows, poolPrefix, label, key) {
+  const fmt = matchRules.bracketFormat || 'se-no-bronze';
+  const n = poolRows.filter((r) => (r.name || '').trim()).length;
+  if (fmt === 'se-solo' && n === 1) {
+    return buildSoloMedalMatch(poolRows, {
+      categoryDisplay: label,
+      categoryKey: key,
+      poolPrefix,
+    });
+  }
+  if (n < 2) return null;
+  if (fmt.startsWith('de-')) {
+    return buildDoubleEliminationQueueForPool(poolRows, {
+      categoryDisplay: label,
+      categoryKey: key,
+      poolPrefix,
+      bracketFormat: fmt,
+    });
+  }
+  const includeBronze = fmt === 'se-bronze';
+  return buildSingleEliminationQueueForPool(poolRows, {
+    categoryDisplay: label,
+    categoryKey: key,
+    includeBronze,
+    poolPrefix,
+  });
+}
+
 function buildAllCategoryBracketsFromRoster() {
   reloadMatchRulesFromStorage();
   const roster = getSavedEventRoster();
   const pools = splitRosterIntoPools(roster, matchRules);
+  const fmt = matchRules.bracketFormat || 'se-no-bronze';
   const combined = [];
   let poolIdx = 0;
   for (const pool of pools) {
-    if (pool.rows.length < 2) continue;
+    const n = pool.rows.filter((r) => (r.name || '').trim()).length;
+    if (n < 1) continue;
+    if (fmt !== 'se-solo' && n < 2) continue;
     const poolPrefix = `P${poolIdx}-`;
     poolIdx++;
-    const chunk = buildSingleEliminationQueueForPool(pool.rows, {
-      categoryDisplay: pool.label,
-      categoryKey: pool.key,
-      includeBronze: matchRules.includeBronze,
-      poolPrefix,
-    });
+    const chunk = buildPoolBracketChunk(pool.rows, poolPrefix, pool.label, pool.key);
     if (!chunk || !chunk.length) continue;
     const offset = combined.length ? Math.max(...combined.map((m) => m.order)) : 0;
     chunk.forEach((m) => {
@@ -3879,7 +4941,7 @@ function buildAllCategoryBracketsFromRoster() {
   const ready = combined.filter(matchReadyToStart);
   ready.sort((a, b) => a.order - b.order);
   combined.forEach((m) => {
-    m.status = 'upcoming';
+    if (m.matchKind !== 'solo') m.status = 'upcoming';
   });
   if (ready[0]) {
     const first = combined.find((m) => m.id === ready[0].id);
@@ -3962,6 +5024,7 @@ function migrateQueueMatches(arr) {
       matchKind: m.matchKind || 'elimination',
       redLoserFrom: m.redLoserFrom || null,
       blueLoserFrom: m.blueLoserFrom || null,
+      bracketTrack: m.bracketTrack != null ? m.bracketTrack : null,
     };
   });
 }
@@ -4204,7 +5267,44 @@ function buildQueueExtensionBracketBoardHtml(sorted) {
   return html;
 }
 
+function qextBuildTrackedBracketForCategory(matches) {
+  const order = ['WB', 'LB', 'BZ', 'GF', 'SOLO'];
+  const byTrack = new Map();
+  for (const m of matches) {
+    const t = m.bracketTrack || 'WB';
+    if (!byTrack.has(t)) byTrack.set(t, []);
+    byTrack.get(t).push(m);
+  }
+  let inner = '';
+  for (const t of order) {
+    const arr = byTrack.get(t);
+    if (!arr || !arr.length) continue;
+    arr.sort((a, b) => (a.order || 0) - (b.order || 0));
+    const title =
+      t === 'WB'
+        ? 'Winners bracket'
+        : t === 'LB'
+          ? 'Losers bracket'
+          : t === 'BZ'
+            ? 'Bronze'
+            : t === 'GF'
+              ? 'Grand final'
+              : t === 'SOLO'
+                ? 'Solo entry'
+                : t;
+    inner += `<div class="qext-track-block"><div class="qext-track-head">${qextEscapeHtml(title)}</div><div class="qext-track-matches">`;
+    for (const m of arr) {
+      inner += qextClassicMatchCell(m);
+    }
+    inner += '</div></div>';
+  }
+  return inner;
+}
+
 function qextBuildClassicBracketForCategory(matches) {
+  if (matches.some((m) => m.bracketTrack)) {
+    return qextBuildTrackedBracketForCategory(matches);
+  }
   const maxR = Math.max(...matches.map((m) => m.round), 1);
   const rounds = {};
   const bronzeMs = [];
@@ -4259,7 +5359,8 @@ function renderQueueExtensionFromStorage() {
   const specLine = buildAudienceEventSpecs(rulesNorm);
   const elLine = $('qext-event-line');
   if (elLine) {
-    const bits = [rulesNorm.category, specLine].filter(Boolean);
+    const bfl = bracketFormatShortLabel(rulesNorm.bracketFormat || 'se-no-bronze');
+    const bits = [rulesNorm.category, specLine, bfl].filter(Boolean);
     elLine.textContent = bits.length ? bits.join(' · ') : 'National KaliArena Championship';
   }
 
@@ -4281,7 +5382,7 @@ function renderQueueExtensionFromStorage() {
   if (!listEl || !resEl) return;
 
   if (!sorted.length) {
-    listEl.innerHTML = '<p class="qext-empty">No matches in queue. Add a roster in Event setup and use <strong>Build single-elim bracket from roster</strong> on match control.</p>';
+    listEl.innerHTML = '<p class="qext-empty">No matches in queue. Add a roster in Event setup and use <strong>Build bracket from roster</strong> on match control. Open <strong>Players queue</strong> to see match order and bracket diagrams.</p>';
     resEl.innerHTML = '';
     return;
   }
@@ -4662,7 +5763,8 @@ function render() {
   document.querySelectorAll('.rnd-num').forEach(el=>el.textContent=round);
   const rsl = roundScoreLimit();
   const comp = matchRules.competitionType === 'live-stick' ? 'Live stick' : 'Padded stick';
-  $('rules-badge').textContent = `${comp} · ${maxRounds()}R · ${fmt(initTime())}${rsl != null ? ` · ${rsl}pt/rd` : ''}`;
+  const bfmt = bracketFormatShortLabel(matchRules.bracketFormat || 'se-no-bronze');
+  $('rules-badge').textContent = `${comp} · ${bfmt} · ${maxRounds()}R · ${fmt(initTime())}${rsl != null ? ` · ${rsl}pt/rd` : ''}`;
 
   // Play/Pause icons
   $('play-icon').style.display  = isActive ? 'none' : '';
@@ -5250,18 +6352,45 @@ function handleNewMatch() {
 }
 
 function buildBracketFromRosterClick() {
-  const roster = getSavedEventRoster().filter((r) => (r.name || '').trim());
-  if (roster.length < 2) {
-    showToast('Need at least 2 fighters', 'Add roster in Event setup (Name | Team), Continue, then build again.');
+  reloadMatchRulesFromStorage();
+  const fmt = matchRules.bracketFormat || 'se-no-bronze';
+  const fullRoster = getSavedEventRoster();
+  const pools = splitRosterIntoPools(fullRoster, matchRules);
+  const canBuild = pools.some((p) => {
+    const n = p.rows.filter((r) => (r.name || '').trim()).length;
+    if (n >= 2) return true;
+    if (fmt === 'se-solo' && n === 1) return true;
+    return false;
+  });
+  if (!canBuild) {
+    showToast(
+      'Need fighters',
+      fmt === 'se-solo'
+        ? 'Add at least one fighter in a category (solo entry), or two fighters for elimination.'
+        : 'Add roster in Event setup (Name | Team), Continue, then build again.'
+    );
     return;
+  }
+  if (fmt.startsWith('de-')) {
+    const bad = pools.some((p) => {
+      const n = p.rows.filter((r) => (r.name || '').trim()).length;
+      if (n < 2) return false;
+      return n !== 2 && n !== 4;
+    });
+    if (bad) {
+      showToast(
+        'Double elimination',
+        'Each category needs exactly 4 fighters (or 2 for one straight final). Adjust the roster or choose single elimination.'
+      );
+      return;
+    }
   }
   const q = state.matchQueue || [];
   const dirty = q.some((m) => m.status === 'live' || m.status === 'upcoming');
-  if (dirty && !window.confirm('Replace the current match queue with new single-elimination bracket(s) per category?')) return;
-  reloadMatchRulesFromStorage();
+  if (dirty && !window.confirm('Replace the current match queue with new bracket(s) per category?')) return;
   const matches = buildAllCategoryBracketsFromRoster();
   if (!matches || !matches.length) {
-    showToast('Could not build bracket', 'Need at least 2 fighters in one category (set weight/division/age columns).');
+    showToast('Could not build bracket', 'Check category sizes vs bracket format (e.g. double elim needs 4 fighters per category).');
     return;
   }
   scanQueueBackToBackWarnings(matches);
@@ -5275,8 +6404,12 @@ function buildBracketFromRosterClick() {
   }
   resetMatchScoringStateForNewQueue();
   loadQueue();
-  const pools = splitRosterIntoPools(roster, matchRules).filter((p) => p.rows.length >= 2).length;
-  showToast('Bracket ready', `${matches.length} bout(s) in ${pools} category bracket(s). Order: light→heavy, young→old, women→men.`);
+  const poolCount = splitRosterIntoPools(fullRoster, matchRules).filter((p) => {
+    const n = p.rows.filter((r) => (r.name || '').trim()).length;
+    if (fmt === 'se-solo') return n >= 1;
+    return n >= 2;
+  }).length;
+  showToast('Bracket ready', `${matches.length} bout row(s) across ${poolCount} pool(s). Order follows your event rules.`);
   render();
 }
 
@@ -5397,6 +6530,7 @@ function exportMatchResultsPrint() {
 //  EVENT LISTENERS (main control only — extension is read-only)
 // ═══════════════════════════════════════════════════════
 if (!IS_EXTENSION && !IS_QUEUE_DISPLAY) {
+initMatchSetupBracketUi();
 $('btn-setup-continue').addEventListener('click', () => { completeEventSetup(); });
 function openSetupConfirmModal() {
   const o = $('overlay-setup-confirm');
@@ -5408,7 +6542,20 @@ function openSetupConfirmModal() {
 function closeSetupConfirmModal() {
   $('overlay-setup-confirm')?.classList.add('hidden');
 }
+function openEndEventModal() {
+  const o = $('overlay-end-event');
+  if (o) {
+    o.classList.remove('hidden');
+    setTimeout(() => $('btn-end-event-cancel')?.focus(), 0);
+  }
+}
+function closeEndEventModal() {
+  $('overlay-end-event')?.classList.add('hidden');
+}
 $('btn-open-event-setup').addEventListener('click', () => openSetupConfirmModal());
+$('btn-end-event')?.addEventListener('click', () => openEndEventModal());
+$('btn-end-event-cancel')?.addEventListener('click', () => closeEndEventModal());
+$('btn-end-event-confirm')?.addEventListener('click', () => resetMatchControlEvent());
 $('btn-setup-confirm-cancel').addEventListener('click', () => closeSetupConfirmModal());
 $('btn-setup-confirm-open').addEventListener('click', () => {
   closeSetupConfirmModal();
@@ -5581,8 +6728,10 @@ $('overlay-celebration')?.addEventListener('click', e => {
 });
 
 // Close dialogs on overlay click
-['overlay-round','overlay-end','overlay-setup-confirm'].forEach(id=>{
-  $(id).addEventListener('click', e=>{ if(e.target===e.currentTarget) $(id).classList.add('hidden'); });
+['overlay-round','overlay-end','overlay-setup-confirm','overlay-end-event'].forEach(id=>{
+  const el = $(id);
+  if (!el) return;
+  el.addEventListener('click', e=>{ if(e.target===e.currentTarget) el.classList.add('hidden'); });
 });
 
 // Keyboard shortcuts
@@ -5590,6 +6739,11 @@ document.addEventListener('keydown', e=>{
   const celeb = $('overlay-celebration');
   if (celeb && !celeb.classList.contains('hidden')) {
     if (e.key === 'Escape') { e.preventDefault(); finishCelebrationToResults(); }
+    return;
+  }
+  const endEv = $('overlay-end-event');
+  if (endEv && !endEv.classList.contains('hidden')) {
+    if (e.key === 'Escape') { e.preventDefault(); closeEndEventModal(); }
     return;
   }
   const setupOv = $('overlay-setup-confirm');
@@ -5609,38 +6763,18 @@ document.addEventListener('keydown', e=>{
 //  INIT
 // ═══════════════════════════════════════════════════════
 if (IS_EXTENSION) {
-  window.addEventListener('message', (e) => {
-    if (e.origin !== window.location.origin) return;
-    if (e.data?.type !== 'extension-toggle-fullscreen') return;
-    const d = document;
-    if (d.fullscreenElement) d.exitFullscreen();
-    else d.documentElement.requestFullscreen().catch(() => {});
-  });
   renderExtensionFromStorage();
   setInterval(renderExtensionFromStorage, 200);
   window.addEventListener('storage', renderExtensionFromStorage);
 } else if (IS_QUEUE_DISPLAY) {
-  window.addEventListener('message', (e) => {
-    if (e.origin !== window.location.origin) return;
-    if (e.data?.type !== 'extension-toggle-fullscreen') return;
-    const d = document;
-    if (d.fullscreenElement) d.exitFullscreen();
-    else d.documentElement.requestFullscreen().catch(() => {});
-  });
   renderQueueExtensionFromStorage();
   setInterval(renderQueueExtensionFromStorage, 250);
   window.addEventListener('storage', renderQueueExtensionFromStorage);
 } else {
   const openExt = $('btn-open-extension');
   if (openExt) openExt.addEventListener('click', () => openExtensionDisplay());
-  const fsExt = $('btn-extension-fullscreen');
-  if (fsExt) fsExt.addEventListener('click', () => toggleExtensionDisplayFullscreen());
   const openQ = $('btn-open-queue');
   if (openQ) openQ.addEventListener('click', () => openQueueDisplay());
-  const fsQ = $('btn-queue-fullscreen');
-  if (fsQ) fsQ.addEventListener('click', () => toggleQueueDisplayFullscreen());
-  setInterval(() => { updateExtensionWindowUi(); updateQueueWindowUi(); }, 800);
-  window.addEventListener('focus', () => { updateExtensionWindowUi(); updateQueueWindowUi(); });
   if (needsInitialEventSetup()) showSetupScreen();
   else hideSetupScreen();
   loadQueue();
