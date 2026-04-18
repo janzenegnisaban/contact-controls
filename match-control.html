@@ -445,7 +445,7 @@
 
     .score-display { text-align: center; background: rgba(0, 0, 0, 0.35); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 16px; }
     .score-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted-fg); margin-bottom: 8px; }
-    .score-number { font-size: clamp(96px, 18vw, 200px); font-weight: 900; line-height: 1; margin-bottom: 16px; letter-spacing: -0.03em; }
+    .score-number { font-size: clamp(160px, 28vw, 320px); font-weight: 900; line-height: 1; margin-bottom: 16px; letter-spacing: -0.03em; }
     .score-number-blue { color: var(--blue); text-shadow: 0 4px 24px rgba(59, 130, 246, 0.35); }
     .score-number-red  { color: var(--red); text-shadow: 0 4px 24px rgba(220, 38, 38, 0.35); }
 
@@ -2948,6 +2948,7 @@
     </div>
     <div class="dialog-footer">
       <button class="btn-outline" id="btn-end-close">Close</button>
+      <button class="btn-outline" id="btn-end-print" onclick="exportMatchResultsPrint()" title="Print or save all completed match results">Print Results</button>
       <button class="btn-primary" id="btn-end-new-match">Next match</button>
     </div>
   </div>
@@ -6456,71 +6457,100 @@ function exportMatchResultsPrint() {
   reloadMatchRulesFromStorage();
   const r = matchRules;
   let mq = [];
-  try {
-    mq = JSON.parse(localStorage.getItem('matchQueue') || '[]');
-  } catch {
-    mq = [];
-  }
+  try { mq = JSON.parse(localStorage.getItem('matchQueue') || '[]'); } catch { mq = []; }
   if (!Array.isArray(mq)) mq = [];
-  const completed = mq.filter((m) => m.status === 'completed');
-  const compLabel = r.competitionType === 'live-stick' ? 'Live stick sparring' : 'Padded stick sparring';
-  const rows =
-    completed.length > 0
-      ? completed
-          .map((m) => {
-            const rn = m.redCorner?.name || '—';
-            const bn = m.blueCorner?.name || '—';
-            const rs = m.redScore != null ? m.redScore : '—';
-            const bs = m.blueScore != null ? m.blueScore : '—';
-            const w =
-              m.winner === 'red' ? rn : m.winner === 'blue' ? bn : m.winner === 'tie' ? 'Tie' : '—';
-            return (
-              '<tr><td>' +
-              escapeHtmlMatch(m.bracketPhase || m.bout || '') +
-              '</td><td>' +
-              escapeHtmlMatch(rn) +
-              '</td><td>' +
-              escapeHtmlMatch(bn) +
-              '</td><td>' +
-              rs +
-              '</td><td>' +
-              bs +
-              '</td><td>' +
-              escapeHtmlMatch(String(w)) +
-              '</td></tr>'
-            );
-          })
-          .join('')
-      : '<tr><td colspan="6">No completed bouts in match queue yet.</td></tr>';
-  const when = new Date().toLocaleString();
-  const html =
-    '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Match results</title>' +
-    '<style>body{font-family:system-ui,sans-serif;padding:24px;color:#111}table{border-collapse:collapse;width:100%;max-width:960px}th,td{border:1px solid #ccc;padding:8px;text-align:left}th{background:#f4f4f5}</style></head><body>' +
-    '<h1>KaliArena · Match results</h1>' +
-    '<p style="color:#666">' +
-    escapeHtmlMatch(when) +
-    '</p>' +
-    '<p><strong>' +
-    escapeHtmlMatch(compLabel) +
-    '</strong> · ' +
-    escapeHtmlMatch(r.category || 'Event') +
-    ' · ' +
-    escapeHtmlMatch(divisionLabel(r.division) || '') +
-    ' ' +
-    escapeHtmlMatch(r.ageRange || '') +
-    '</p>' +
-    '<h2>Completed bouts</h2>' +
-    '<table><thead><tr><th>Phase</th><th>Red</th><th>Blue</th><th>Red pts</th><th>Blue pts</th><th>Winner</th></tr></thead><tbody>' +
-    rows +
-    '</tbody></table>' +
-    '<scr' +
-    'ipt>window.onload=function(){ window.print(); }</scr' +
-    'ipt></body></html>';
-  const w = window.open('', '_blank');
-  if (!w) {
-    showToast('Popup blocked', 'Allow pop-ups to export.');
-    return;
+
+  const completed = mq.filter(m => m.status === 'completed');
+  const compLabel = r.competitionType === 'live-stick' ? 'Full Contact — Live Stick' : 'Full Contact — Padded';
+  const divLbl  = escapeHtmlMatch(divisionLabel(r.division) || '');
+  const when    = new Date().toLocaleString();
+  const catInfo = escapeHtmlMatch(r.category || '') + (divLbl ? ' · ' + divLbl : '') + (r.ageRange ? ' · ' + escapeHtmlMatch(r.ageRange) : '');
+
+  // HTML rows for completed bouts
+  const boutRows = completed.length > 0
+    ? completed.map(m => {
+        const rn = m.redCorner?.name  || '—';
+        const bn = m.blueCorner?.name || '—';
+        const rt = m.redCorner?.team  || '';
+        const bt = m.blueCorner?.team || '';
+        const rs = m.redScore  != null ? m.redScore  : '—';
+        const bs = m.blueScore != null ? m.blueScore : '—';
+        const wName = m.winner === 'red' ? rn : m.winner === 'blue' ? bn : 'Tie';
+        const wCls  = m.winner === 'red' ? 'color:#dc2626' : m.winner === 'blue' ? 'color:#2563eb' : 'color:#888';
+        return '<tr><td>' + escapeHtmlMatch(m.bracketPhase || m.bout || '') +
+          '</td><td>' + escapeHtmlMatch(rn) + (rt ? '<br><small style="color:#888">' + escapeHtmlMatch(rt) + '</small>' : '') +
+          '</td><td>' + escapeHtmlMatch(bn) + (bt ? '<br><small style="color:#888">' + escapeHtmlMatch(bt) + '</small>' : '') +
+          '</td><td>' + rs + '</td><td>' + bs +
+          '</td><td style="' + wCls + ';font-weight:600">' + escapeHtmlMatch(wName) + '</td></tr>';
+      }).join('')
+    : '<tr><td colspan="6" style="color:#888">No completed bouts yet.</td></tr>';
+
+  // Compute simple standings from bracket finals
+  const finals = completed.filter(m => /final/i.test(m.bracketPhase || m.bout || ''));
+  let standingsHtml = '';
+  let standingsPipe = '';
+  if (finals.length > 0) {
+    const championship = finals.find(m => /championship|grand.?final/i.test(m.bracketPhase || m.bout || '')) || finals[finals.length - 1];
+    const winnerName = championship?.winner === 'red' ? championship.redCorner?.name  : championship.blueCorner?.name;
+    const winnerTeam = championship?.winner === 'red' ? championship.redCorner?.team  : championship.blueCorner?.team;
+    const runnerName = championship?.winner === 'red' ? championship.blueCorner?.name : championship.redCorner?.name;
+    const runnerTeam = championship?.winner === 'red' ? championship.blueCorner?.team : championship.redCorner?.team;
+    if (winnerName) {
+      standingsHtml = '<h2>Final Standings</h2><table><thead><tr><th>Place</th><th>Name</th><th>Team</th></tr></thead><tbody>' +
+        '<tr><td>🥇 1st</td><td>' + escapeHtmlMatch(winnerName) + '</td><td>' + escapeHtmlMatch(winnerTeam||'') + '</td></tr>' +
+        (runnerName ? '<tr><td>🥈 2nd</td><td>' + escapeHtmlMatch(runnerName) + '</td><td>' + escapeHtmlMatch(runnerTeam||'') + '</td></tr>' : '') +
+        '</tbody></table>';
+      standingsPipe = 'PLACE|NAME|TEAM|CATEGORY|MEDAL\n' +
+        '1|' + (winnerName||'') + '|' + (winnerTeam||'') + '|' + (r.category||'') + '|GOLD\n' +
+        (runnerName ? '2|' + (runnerName||'') + '|' + (runnerTeam||'') + '|' + (r.category||'') + '|SILVER\n' : '');
+    }
   }
+
+  // Pipe-delimited for all bouts
+  let pipeLines = '# KaliArena Full Contact Results\n# Exported: ' + when + '\n';
+  pipeLines += '# ' + compLabel + ' · ' + (r.category||'') + (r.ageRange ? ' · ' + r.ageRange : '') + '\n\n';
+  pipeLines += 'BOUT|RED|RED_TEAM|RED_PTS|BLUE|BLUE_TEAM|BLUE_PTS|WINNER\n';
+  if (completed.length > 0) {
+    pipeLines += completed.map(m => {
+      const rn = m.redCorner?.name  || '';
+      const rt = m.redCorner?.team  || '';
+      const bn = m.blueCorner?.name || '';
+      const bt = m.blueCorner?.team || '';
+      const rs = m.redScore  != null ? m.redScore  : '';
+      const bs = m.blueScore != null ? m.blueScore : '';
+      const wn = m.winner === 'red' ? rn : m.winner === 'blue' ? bn : 'Tie';
+      return (m.bracketPhase || m.bout || '') + '|' + rn + '|' + rt + '|' + rs + '|' + bn + '|' + bt + '|' + bs + '|' + wn;
+    }).join('\n');
+  }
+  if (standingsPipe) { pipeLines += '\n\n## Final Standings\n' + standingsPipe; }
+
+  const html =
+    '<!DOCTYPE html><html><head><meta charset="utf-8"><title>KaliArena · Match Results</title>' +
+    '<style>body{font-family:system-ui,sans-serif;padding:24px;color:#111;max-width:960px;margin:0 auto}' +
+    'h1{font-size:1.5rem;margin-bottom:.25rem}h2{font-size:1.125rem;margin-top:1.75rem;margin-bottom:.5rem;' +
+    'border-bottom:2px solid #e4e4e7;padding-bottom:.375rem}' +
+    'table{border-collapse:collapse;width:100%;margin-bottom:1rem}' +
+    'th,td{border:1px solid #d4d4d8;padding:7px 10px;text-align:left;font-size:.875rem}' +
+    'th{background:#f4f4f5;font-weight:600}' +
+    '.pipe-block{font-family:monospace;font-size:.8125rem;background:#f9f9f9;border:1px solid #d4d4d8;' +
+    'padding:1rem;white-space:pre;overflow-x:auto;margin-top:.5rem}' +
+    '@media print{.no-print{display:none}}' +
+    '</style></head><body>' +
+    '<h1>KaliArena &mdash; Match Results</h1>' +
+    '<p style="color:#71717a">' + escapeHtmlMatch(when) + '</p>' +
+    '<p><strong>' + escapeHtmlMatch(compLabel) + '</strong> &nbsp;|&nbsp; ' + catInfo + '</p>' +
+    '<h2>Completed Bouts</h2>' +
+    '<table><thead><tr><th>Bout / Phase</th><th>Red Corner</th><th>Blue Corner</th><th>Red Pts</th><th>Blue Pts</th><th>Winner</th></tr></thead><tbody>' +
+    boutRows + '</tbody></table>' +
+    standingsHtml +
+    '<h2>Organizer Results Format (paste into portal)</h2>' +
+    '<p class="no-print" style="font-size:.875rem;color:#71717a;">Copy this text and paste it into the Organizer Portal &rarr; Results &rarr; Submit Results.</p>' +
+    '<div class="pipe-block">' + escapeHtmlMatch(pipeLines) + '</div>' +
+    '<scr' + 'ipt>window.onload=function(){ window.print(); }</scr' + 'ipt>' +
+    '</body></html>';
+
+  const w = window.open('', '_blank');
+  if (!w) { showToast('Popup blocked', 'Allow pop-ups to export.'); return; }
   w.document.open();
   w.document.write(html);
   w.document.close();
